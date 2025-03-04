@@ -1,11 +1,11 @@
 {
-  "name": "Random Button",
+  "name": "THE RANDOM BUTTON",
   "short_name": "RandomBtn",
-  "description": "Click for random content - facts, jokes, challenges, quotes, and advice",
+  "description": "Dare to click the button. Your fate awaits.",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#764ba2",
-  "theme_color": "#764ba2",
+  "background_color": "#121212",
+  "theme_color": "#ff3a3a",
   "icons": [
     {
       "src": "favicon.svg",
