@@ -32,5 +32,37 @@
     </footer>
     
     <script src="script.js"></script>
+    <script>
+        // Backup script in case the external file doesn't load properly
+        document.addEventListener('DOMContentLoaded', () => {
+            const randomButton = document.getElementById('randomButton');
+            const resultText = document.getElementById('resultText');
+            
+            if (randomButton && resultText) {
+                randomButton.addEventListener('click', () => {
+                    const randomPhrases = [
+                        "🧠 Did you know? The average human brain has about 100 billion neurons!",
+                        "😂 Why did the scarecrow win an award? Because he was outstanding in his field!",
+                        "🎯 Challenge: Do 10 jumping jacks right now!",
+                        "💭 \"Life is what happens when you're busy making other plans.\" — John Lennon",
+                        "💡 Advice: Drink a glass of water right now."
+                    ];
+                    
+                    const randomIndex = Math.floor(Math.random() * randomPhrases.length);
+                    resultText.textContent = randomPhrases[randomIndex];
+                    
+                    // Button animation
+                    randomButton.style.transform = 'scale(0.95)';
+                    setTimeout(() => {
+                        randomButton.style.transform = '';
+                    }, 150);
+                });
+                
+                console.log("Backup script loaded successfully!");
+            } else {
+                console.error("Button or result text element not found!");
+            }
+        });
+    </script>
 </body>
 </html> 
