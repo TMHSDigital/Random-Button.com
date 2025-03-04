@@ -1,0 +1,16 @@
+{
+  "name": "Random Button",
+  "short_name": "RandomBtn",
+  "description": "Click for random content - facts, jokes, challenges, quotes, and advice",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#764ba2",
+  "theme_color": "#764ba2",
+  "icons": [
+    {
+      "src": "favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+} 
