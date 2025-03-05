@@ -382,6 +382,187 @@
                 height: 300px;
             }
         }
+
+        /* Achievements Panel */
+        .achievements-panel {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            width: 90%;
+            max-width: 500px;
+            max-height: 80vh;
+            background: rgba(15, 15, 15, 0.95);
+            border: 2px solid var(--accent-color);
+            border-radius: 12px;
+            box-shadow: 0 0 25px rgba(255, 58, 58, 0.3);
+            z-index: 1000;
+            overflow: hidden;
+            opacity: 0;
+            pointer-events: none;
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275),
+                        opacity 0.2s ease;
+        }
+        
+        .achievements-panel.active {
+            transform: translate(-50%, -50%) scale(1);
+            opacity: 1;
+            pointer-events: all;
+        }
+        
+        .achievements-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+            border-bottom: 1px solid rgba(255, 58, 58, 0.3);
+        }
+        
+        .achievements-header h2 {
+            margin: 0;
+            font-size: 1.5rem;
+            color: var(--accent-color);
+        }
+        
+        #closeAchievements {
+            background: none;
+            border: none;
+            color: var(--text-color);
+            font-size: 1.8rem;
+            cursor: pointer;
+            padding: 0 5px;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+        }
+        
+        #closeAchievements:hover {
+            opacity: 1;
+        }
+        
+        .achievements-container {
+            padding: 20px;
+            overflow-y: auto;
+            max-height: calc(80vh - 60px);
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+        }
+        
+        .achievement-card {
+            background: rgba(30, 30, 30, 0.7);
+            border-radius: 8px;
+            padding: 15px;
+            text-align: center;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .achievement-card.unlocked {
+            box-shadow: 0 0 15px rgba(255, 58, 58, 0.3);
+            border-color: rgba(255, 58, 58, 0.4);
+        }
+        
+        .achievement-card.locked {
+            filter: grayscale(1);
+            opacity: 0.6;
+        }
+        
+        .achievement-card.locked::after {
+            content: '🔒';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 2rem;
+            opacity: 0.7;
+        }
+        
+        .achievement-icon {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        
+        .achievement-title {
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: var(--text-color);
+        }
+        
+        .achievement-description {
+            font-size: 0.8rem;
+            opacity: 0.8;
+        }
+        
+        /* Achievement Notification */
+        .achievement-notification {
+            position: fixed;
+            bottom: -100px;
+            right: 20px;
+            background: rgba(15, 15, 15, 0.9);
+            border: 2px solid var(--accent-color);
+            border-radius: 8px;
+            padding: 15px;
+            width: 280px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            box-shadow: 0 0 20px rgba(255, 58, 58, 0.3);
+            transition: bottom 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            z-index: 900;
+        }
+        
+        .achievement-notification.active {
+            bottom: 20px;
+        }
+        
+        .achievement-notification .achievement-icon {
+            font-size: 2.5rem;
+            margin: 0;
+        }
+        
+        .achievement-content {
+            flex: 1;
+        }
+        
+        .achievement-content h3 {
+            margin: 0 0 5px 0;
+            color: var(--accent-color);
+            font-size: 1rem;
+        }
+        
+        .achievement-content p {
+            margin: 0;
+            font-size: 0.8rem;
+            opacity: 0.9;
+        }
+        
+        /* Achievements Button */
+        .achievements-button {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            box-shadow: 0 0 15px rgba(255, 58, 58, 0.3);
+            z-index: 500;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        .achievements-button:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 20px rgba(255, 58, 58, 0.4);
+        }
     </style>
 </head>
 <body>
@@ -407,6 +588,31 @@
     
     <div class="milestone-text" id="milestoneText"></div>
     <div class="visual-effect" id="visualEffect"></div>
+    
+    <!-- Achievements Panel -->
+    <div class="achievements-panel" id="achievementsPanel">
+        <div class="achievements-header">
+            <h2>Achievements</h2>
+            <button id="closeAchievements" aria-label="Close achievements panel">×</button>
+        </div>
+        <div class="achievements-container" id="achievementsContainer">
+            <!-- Achievements will be added here dynamically -->
+        </div>
+    </div>
+    
+    <!-- Achievement Notification -->
+    <div class="achievement-notification" id="achievementNotification">
+        <div class="achievement-icon">🏆</div>
+        <div class="achievement-content">
+            <h3 id="achievementTitle">Achievement Unlocked!</h3>
+            <p id="achievementDescription"></p>
+        </div>
+    </div>
+    
+    <!-- Achievements Button -->
+    <button id="showAchievements" class="achievements-button" aria-label="Show achievements">
+        🏆
+    </button>
     
     <footer>
         <p>Created by <a href="https://github.com/TMHSDigital/Random-Button.com" target="_blank" rel="noopener">TMHSDigital</a></p>
@@ -436,6 +642,15 @@
             const progressCircle = document.getElementById('progressCircle');
             const milestoneText = document.getElementById('milestoneText');
             
+            // Achievements elements
+            const achievementsPanel = document.getElementById('achievementsPanel');
+            const achievementsContainer = document.getElementById('achievementsContainer');
+            const showAchievementsBtn = document.getElementById('showAchievements');
+            const closeAchievementsBtn = document.getElementById('closeAchievements');
+            const achievementNotification = document.getElementById('achievementNotification');
+            const achievementTitle = document.getElementById('achievementTitle');
+            const achievementDescription = document.getElementById('achievementDescription');
+            
             // Audio
             const clickSound = document.getElementById('clickSound');
             const powerSound = document.getElementById('powerSound');
@@ -464,6 +679,168 @@
             const MILESTONE = 50; // Clicks for milestone celebration
             const MAX_INDICATORS = 16;
             const CIRCLE_CIRCUMFERENCE = 502; // 2πr where r=80
+            
+            // Load saved click count from localStorage
+            const savedCount = localStorage.getItem('clickCount');
+            if (savedCount) {
+                count = parseInt(savedCount, 10);
+                updateClickCount();
+                updateIndicators();
+            }
+            
+            // Achievements system
+            const achievements = [
+                {
+                    id: 'beginner',
+                    title: 'Beginner',
+                    description: 'Click the button 10 times',
+                    icon: '👶',
+                    requirement: 10
+                },
+                {
+                    id: 'enthusiast',
+                    title: 'Enthusiast',
+                    description: 'Click the button 50 times',
+                    icon: '👍',
+                    requirement: 50
+                },
+                {
+                    id: 'dedicated',
+                    title: 'Dedicated',
+                    description: 'Click the button 100 times',
+                    icon: '🔥',
+                    requirement: 100
+                },
+                {
+                    id: 'clicker',
+                    title: 'Pro Clicker',
+                    description: 'Click the button 250 times',
+                    icon: '🎯',
+                    requirement: 250
+                },
+                {
+                    id: 'obsessed',
+                    title: 'Obsessed',
+                    description: 'Click the button 500 times',
+                    icon: '😵',
+                    requirement: 500
+                },
+                {
+                    id: 'master',
+                    title: 'Button Master',
+                    description: 'Click the button 1,000 times',
+                    icon: '🏆',
+                    requirement: 1000
+                },
+                {
+                    id: 'legend',
+                    title: 'Legendary Clicker',
+                    description: 'Click the button 5,000 times',
+                    icon: '👑',
+                    requirement: 5000
+                },
+                {
+                    id: 'speedster',
+                    title: 'Speedster',
+                    description: 'Click the button 5 times in 1 second',
+                    icon: '⚡',
+                    requirement: 'special'
+                }
+            ];
+            
+            // Load unlocked achievements from localStorage
+            let unlockedAchievements = JSON.parse(localStorage.getItem('unlockedAchievements')) || [];
+            
+            // Initialize achievements display
+            function initAchievements() {
+                achievementsContainer.innerHTML = '';
+                
+                achievements.forEach(achievement => {
+                    const isUnlocked = unlockedAchievements.includes(achievement.id);
+                    
+                    const achievementCard = document.createElement('div');
+                    achievementCard.classList.add('achievement-card');
+                    achievementCard.classList.add(isUnlocked ? 'unlocked' : 'locked');
+                    
+                    achievementCard.innerHTML = `
+                        <div class="achievement-icon">${achievement.icon}</div>
+                        <div class="achievement-title">${achievement.title}</div>
+                        <div class="achievement-description">${achievement.description}</div>
+                    `;
+                    
+                    achievementsContainer.appendChild(achievementCard);
+                });
+            }
+            
+            // Check for unlocked achievements
+            function checkAchievements() {
+                let newlyUnlocked = false;
+                
+                achievements.forEach(achievement => {
+                    // Skip already unlocked achievements
+                    if (unlockedAchievements.includes(achievement.id)) {
+                        return;
+                    }
+                    
+                    // Check if achievement should be unlocked
+                    let shouldUnlock = false;
+                    
+                    if (achievement.id === 'speedster') {
+                        // Special case for rapid clicks
+                        shouldUnlock = rapidClickCount >= 5;
+                    } else {
+                        // Regular count-based achievements
+                        shouldUnlock = count >= achievement.requirement;
+                    }
+                    
+                    if (shouldUnlock) {
+                        unlockedAchievements.push(achievement.id);
+                        newlyUnlocked = true;
+                        
+                        // Show notification
+                        showAchievementNotification(achievement);
+                        
+                        // Save to localStorage
+                        localStorage.setItem('unlockedAchievements', JSON.stringify(unlockedAchievements));
+                    }
+                });
+                
+                // Update achievements panel if open
+                if (newlyUnlocked && achievementsPanel.classList.contains('active')) {
+                    initAchievements();
+                }
+            }
+            
+            // Show achievement notification
+            function showAchievementNotification(achievement) {
+                achievementTitle.textContent = `${achievement.title} Unlocked!`;
+                achievementDescription.textContent = achievement.description;
+                document.querySelector('.achievement-notification .achievement-icon').textContent = achievement.icon;
+                
+                achievementNotification.classList.add('active');
+                
+                // Play pop sound for achievements
+                popSound.currentTime = 0;
+                popSound.volume = 0.7;
+                popSound.play().catch(e => {
+                    // Handle autoplay restrictions
+                });
+                
+                // Hide notification after 4 seconds
+                setTimeout(() => {
+                    achievementNotification.classList.remove('active');
+                }, 4000);
+            }
+            
+            // Toggle achievements panel
+            showAchievementsBtn.addEventListener('click', () => {
+                initAchievements();
+                achievementsPanel.classList.add('active');
+            });
+            
+            closeAchievementsBtn.addEventListener('click', () => {
+                achievementsPanel.classList.remove('active');
+            });
             
             // Create indicators around the button
             function createIndicators() {
@@ -721,6 +1098,12 @@
                     // Stronger flash effect for milestones
                     flashEffect(0.5);
                 }
+                
+                // Check for unlocked achievements
+                checkAchievements();
+                
+                // Save count to localStorage
+                localStorage.setItem('clickCount', count.toString());
             }
             
             // Add haptic feedback for mobile (if available)
