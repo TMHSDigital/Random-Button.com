@@ -10,6 +10,12 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;600;800&display=swap" rel="stylesheet">
+    
+    <!-- Add preload hint for audio files -->
+    <link rel="preload" as="audio" href="https://cdn.pixabay.com/download/audio/2022/03/10/audio_c8c8a73467.mp3?filename=button-press-39565.mp3" type="audio/mpeg">
+    <link rel="preload" as="audio" href="https://cdn.pixabay.com/download/audio/2022/01/18/audio_99362cae89.mp3?filename=power-up-39172.mp3" type="audio/mpeg">
+    <link rel="preload" as="audio" href="https://cdn.pixabay.com/download/audio/2021/08/04/audio_12b0c171a6.mp3?filename=success-1-6297.mp3" type="audio/mpeg">
+    
     <style>
         :root {
             --bg-color: #0a0a0a;
@@ -19,6 +25,7 @@
             --glow-color: rgba(255, 58, 58, 0.4);
             --card-bg: rgba(30, 30, 30, 0.7);
             --panel-bg: rgba(15, 15, 15, 0.95);
+            --vh: 1vh; /* Variable for viewport height fix */
         }
 
         * {
@@ -458,7 +465,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            z-index: 2000;
+            z-index: 3000; /* Higher z-index to be on top */
             opacity: 0;
             pointer-events: none;
             transition: opacity 0.3s ease;
@@ -596,12 +603,12 @@
             transform: translate(-50%, -50%) scale(0);
             width: 90%;
             max-width: 500px;
-            max-height: 80vh;
+            max-height: calc(var(--vh) * 80);
             background: var(--panel-bg);
             border: 2px solid var(--accent-color);
             border-radius: 12px;
             box-shadow: 0 0 25px rgba(255, 58, 58, 0.3);
-            z-index: 1000;
+            z-index: 2000; /* Explicit z-index */
             overflow: hidden;
             opacity: 0;
             pointer-events: none;
@@ -724,7 +731,7 @@
             gap: 15px;
             box-shadow: 0 0 20px rgba(255, 58, 58, 0.3);
             transition: bottom 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            z-index: 900;
+            z-index: 1900; /* Explicit z-index */
             backdrop-filter: blur(5px);
             -webkit-backdrop-filter: blur(5px);
         }
@@ -821,17 +828,106 @@
             opacity: 0.7;
             margin-top: 2px;
         }
+
+        /* Fix for Safari/iOS layout issues */
+        @supports (-webkit-touch-callout: none) {
+            body, html {
+                height: -webkit-fill-available;
+            }
+            
+            body {
+                min-height: -webkit-fill-available;
+            }
+        }
+        
+        /* Proper focus styles for accessibility */
+        button:focus-visible {
+            outline: 2px solid var(--accent-color);
+            outline-offset: 2px;
+        }
+        
+        /* Prevent text selection on buttons */
+        button {
+            -webkit-user-select: none;
+            user-select: none;
+        }
+        
+        /* Add loading state indicator */
+        .loading-indicator {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: var(--panel-bg);
+            border-radius: 10px;
+            padding: 20px;
+            z-index: 4000;
+            text-align: center;
+            border: 2px solid var(--accent-color);
+            opacity: 1;
+            transition: opacity 0.3s ease;
+        }
+        
+        .loading-indicator.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+        
+        .spinner {
+            width: 40px;
+            height: 40px;
+            margin: 0 auto 15px auto;
+            border: 4px solid rgba(255, 255, 255, 0.1);
+            border-left-color: var(--accent-color);
+            border-radius: 50%;
+            animation: spinner 1s linear infinite;
+        }
+        
+        @keyframes spinner {
+            to { transform: rotate(360deg); }
+        }
+        
+        /* Error message style */
+        .error-message {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(255, 0, 0, 0.2);
+            color: white;
+            padding: 10px 15px;
+            border-radius: 5px;
+            font-size: 0.9rem;
+            z-index: 5000;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            text-align: center;
+            max-width: 90%;
+        }
+        
+        .error-message.visible {
+            opacity: 1;
+        }
     </style>
 </head>
 <body>
+    <!-- Loading indicator -->
+    <div class="loading-indicator" id="loadingIndicator">
+        <div class="spinner"></div>
+        <div>Loading...</div>
+    </div>
+    
+    <!-- Error message -->
+    <div class="error-message" id="errorMessage"></div>
+
     <div class="container">
         <h1>THE BUTTON</h1>
         
         <div class="button-wrapper">
             <div class="button-outer"></div>
-            <button id="theButton">PUSH</button>
+            <button id="theButton" aria-label="Push the button to increment your click count">PUSH</button>
             <div class="feedback-circle" id="feedbackCircle"></div>
-            <div class="click-count" id="clickCount">0</div>
+            <div class="click-count" id="clickCount" aria-live="polite">0</div>
             <div class="next-milestone" id="nextMilestone">
                 <div class="next-milestone-progress">
                     <div class="next-milestone-bar" id="nextMilestoneBar"></div>
@@ -840,33 +936,33 @@
         </div>
     </div>
     
-    <div class="indicator-container" id="indicatorContainer"></div>
+    <div class="indicator-container" id="indicatorContainer" aria-hidden="true"></div>
     
     <!-- SVG for circular progress indicator -->
-    <div class="progress-ring">
+    <div class="progress-ring" aria-hidden="true">
         <svg width="200" height="200">
             <circle r="80" cx="100" cy="100" id="progressCircle"></circle>
         </svg>
     </div>
     
-    <div class="milestone-text" id="milestoneText"></div>
-    <div class="visual-effect" id="visualEffect"></div>
+    <div class="milestone-text" id="milestoneText" aria-hidden="true"></div>
+    <div class="visual-effect" id="visualEffect" aria-hidden="true"></div>
     
     <!-- Reset button -->
-    <button id="resetButton" class="reset-button">Reset Progress</button>
+    <button id="resetButton" class="reset-button" aria-label="Reset all progress">Reset Progress</button>
     
     <!-- Keyboard hint -->
-    <div class="keyboard-hint" id="keyboardHint">
+    <div class="keyboard-hint" id="keyboardHint" aria-hidden="true">
         Press <span>Space</span> to push button · <span>A</span> for achievements
     </div>
     
     <!-- Particles container -->
-    <div class="particles-container" id="particlesContainer"></div>
+    <div class="particles-container" id="particlesContainer" aria-hidden="true"></div>
     
     <!-- Achievements Panel -->
-    <div class="achievements-panel" id="achievementsPanel">
+    <div class="achievements-panel" id="achievementsPanel" role="dialog" aria-modal="true" aria-labelledby="achievementsHeader" aria-hidden="true">
         <div class="achievements-header">
-            <h2>Achievements</h2>
+            <h2 id="achievementsHeader">Achievements</h2>
             <button id="closeAchievements" aria-label="Close achievements panel">×</button>
         </div>
         <div class="achievement-stats" id="achievementStats">
@@ -885,7 +981,7 @@
     </div>
     
     <!-- Achievement Notification -->
-    <div class="achievement-notification" id="achievementNotification">
+    <div class="achievement-notification" id="achievementNotification" aria-live="polite" aria-atomic="true">
         <div class="achievement-icon">🏆</div>
         <div class="achievement-content">
             <h3 id="achievementTitle">Achievement Unlocked!</h3>
@@ -894,10 +990,10 @@
     </div>
     
     <!-- Confirmation Dialog -->
-    <div class="confirmation-dialog" id="confirmationDialog">
+    <div class="confirmation-dialog" id="confirmationDialog" role="dialog" aria-modal="true" aria-labelledby="confirmHeader" aria-describedby="confirmDescription" aria-hidden="true">
         <div class="confirmation-content">
-            <h3>Reset Progress?</h3>
-            <p>This will reset your click count and all achievements. This action cannot be undone.</p>
+            <h3 id="confirmHeader">Reset Progress?</h3>
+            <p id="confirmDescription">This will reset your click count and all achievements. This action cannot be undone.</p>
             <div class="confirmation-buttons">
                 <button id="confirmNo" class="confirmation-button confirm-no">Cancel</button>
                 <button id="confirmYes" class="confirmation-button confirm-yes">Reset</button>
@@ -929,14 +1025,28 @@
     
     <script>
         document.addEventListener('DOMContentLoaded', () => {
+            // Get loading indicator
+            const loadingIndicator = document.getElementById('loadingIndicator');
+            const errorMessage = document.getElementById('errorMessage');
+            
+            // Show error message function
+            function showError(message, duration = 5000) {
+                errorMessage.textContent = message;
+                errorMessage.classList.add('visible');
+                
+                setTimeout(() => {
+                    errorMessage.classList.remove('visible');
+                }, duration);
+            }
+            
             // Elements
             const theButton = document.getElementById('theButton');
             const clickCount = document.getElementById('clickCount');
             const feedbackCircle = document.getElementById('feedbackCircle');
             const indicatorContainer = document.getElementById('indicatorContainer');
-            const visualEffect = document.getElementById('visualEffect');
+            const visualEffect = document.getElementById('visualEffect') || document.createElement('div'); // Fallback if missing
             const progressCircle = document.getElementById('progressCircle');
-            const milestoneText = document.getElementById('milestoneText');
+            const milestoneText = document.getElementById('milestoneText') || document.createElement('div'); // Fallback if missing
             const nextMilestoneBar = document.getElementById('nextMilestoneBar');
             const particlesContainer = document.getElementById('particlesContainer');
             const keyboardHint = document.getElementById('keyboardHint');
@@ -963,21 +1073,6 @@
             const powerSound = document.getElementById('powerSound');
             const popSound = document.getElementById('popSound');
             
-            // Preload audio
-            [clickSound, powerSound, popSound].forEach(sound => {
-                sound.load();
-                // Mute initially to allow autoplay on iOS
-                sound.muted = true;
-                sound.play().then(() => {
-                    sound.pause();
-                    sound.currentTime = 0;
-                    sound.muted = false;
-                }).catch(e => {
-                    // Autoplay not allowed, that's okay
-                    sound.muted = false;
-                });
-            });
-            
             // State
             let count = 0;
             let confettiColors = ['#ff3a3a', '#ff9500', '#ffea00', '#00ff00', '#0095ff', '#9500ff'];
@@ -987,14 +1082,145 @@
             const MAX_INDICATORS = 16;
             const CIRCLE_CIRCUMFERENCE = 502; // 2πr where r=80
             let keyboardUsed = false;
+            let lastClickTime = 0; // For preventing double-trigger on touch devices
+            let lastTouchTime = 0; // For preventing touch vs click interference
+            let audioEnabled = false; // Track if audio has been enabled by user interaction
+            let storageAvailable = true; // Flag to track if localStorage is available
             
-            // Load saved click count from localStorage
-            const savedCount = localStorage.getItem('clickCount');
-            if (savedCount) {
-                count = parseInt(savedCount, 10);
-                updateClickCount();
-                updateIndicators();
-                updateMilestoneProgress();
+            // Check if storage is available
+            function isStorageAvailable() {
+                try {
+                    const test = '__storage_test__';
+                    localStorage.setItem(test, test);
+                    localStorage.removeItem(test);
+                    return true;
+                } catch(e) {
+                    return false;
+                }
+            }
+            
+            // Fix for mobile viewport height
+            function setViewportHeight() {
+                let vh = window.innerHeight * 0.01;
+                document.documentElement.style.setProperty('--vh', `${vh}px`);
+            }
+            
+            // Call once on load
+            setViewportHeight();
+            
+            // Update on resize or orientation change
+            window.addEventListener('resize', setViewportHeight);
+            window.addEventListener('orientationchange', setViewportHeight);
+            
+            // Unified sound playing function with error handling
+            function playSound(sound, volume = 0.5, pitch = 1.0) {
+                // Don't try to play if audio not yet enabled
+                if (!audioEnabled) {
+                    // Store that we want to enable audio on next user interaction
+                    document.body.addEventListener('click', enableAudio, {once: true});
+                    document.body.addEventListener('touchstart', enableAudio, {once: true});
+                    document.body.addEventListener('keydown', enableAudio, {once: true});
+                    return;
+                }
+                
+                // Proceed with playing sound
+                try {
+                    sound.volume = volume;
+                    sound.currentTime = 0;
+                    sound.preservesPitch = false;
+                    sound.playbackRate = pitch;
+                    
+                    const playPromise = sound.play();
+                    
+                    if (playPromise !== undefined) {
+                        playPromise.catch(e => {
+                            console.warn('Audio playback prevented:', e);
+                        });
+                    }
+                } catch(e) {
+                    console.warn('Error playing audio:', e);
+                }
+            }
+            
+            // Function to enable audio after user interaction
+            function enableAudio() {
+                audioEnabled = true;
+                
+                // Try to play all sounds muted to "warm them up"
+                [clickSound, powerSound, popSound].forEach(sound => {
+                    try {
+                        sound.muted = true;
+                        const playPromise = sound.play();
+                        if (playPromise !== undefined) {
+                            playPromise.then(() => {
+                                sound.pause();
+                                sound.currentTime = 0;
+                                sound.muted = false;
+                            }).catch(e => {
+                                sound.muted = false;
+                            });
+                        }
+                    } catch(e) {
+                        sound.muted = false;
+                    }
+                });
+            }
+            
+            // Preload audio with proper error handling
+            function preloadAudio() {
+                [clickSound, powerSound, popSound].forEach(sound => {
+                    try {
+                        sound.load();
+                    } catch (e) {
+                        console.warn('Error preloading audio:', e);
+                    }
+                });
+            }
+            
+            preloadAudio();
+            
+            // Performance check for animations
+            function shouldUseReducedMotion() {
+                return window.matchMedia('(prefers-reduced-motion: reduce)').matches || 
+                       (navigator.hardwareConcurrency !== undefined && navigator.hardwareConcurrency < 4);
+            }
+            
+            // Check if storage is available and set flag
+            storageAvailable = isStorageAvailable();
+            
+            // Load saved click count from localStorage with error handling
+            try {
+                if (storageAvailable) {
+                    const savedCount = localStorage.getItem('clickCount');
+                    if (savedCount) {
+                        count = parseInt(savedCount, 10);
+                        updateClickCount();
+                        updateIndicators();
+                        updateMilestoneProgress();
+                    }
+                }
+            } catch (e) {
+                console.warn('Unable to access localStorage:', e);
+                storageAvailable = false;
+            }
+            
+            // Load unlocked achievements from localStorage with error handling
+            let unlockedAchievements = [];
+            try {
+                if (storageAvailable) {
+                    const savedAchievements = localStorage.getItem('unlockedAchievements');
+                    if (savedAchievements) {
+                        unlockedAchievements = JSON.parse(savedAchievements);
+                    }
+                }
+            } catch (e) {
+                console.warn('Unable to load achievements from localStorage:', e);
+                storageAvailable = false;
+            }
+            
+            // Show storage error if needed
+            if (!storageAvailable) {
+                showError("Local storage is not available. Your progress won't be saved between visits.", 8000);
             }
             
             // Achievements system
@@ -1057,10 +1283,7 @@
                 }
             ];
             
-            // Load unlocked achievements from localStorage
-            let unlockedAchievements = JSON.parse(localStorage.getItem('unlockedAchievements')) || [];
-            
-            // Initialize achievements display
+            // Initialize achievements display with proper accessibility
             function initAchievements() {
                 achievementsContainer.innerHTML = '';
                 
@@ -1070,6 +1293,13 @@
                     const achievementCard = document.createElement('div');
                     achievementCard.classList.add('achievement-card');
                     achievementCard.classList.add(isUnlocked ? 'unlocked' : 'locked');
+                    achievementCard.setAttribute('role', 'listitem');
+                    
+                    if (!isUnlocked) {
+                        achievementCard.setAttribute('aria-label', `Locked achievement: ${achievement.title}. ${achievement.description}`);
+                    } else {
+                        achievementCard.setAttribute('aria-label', `Unlocked achievement: ${achievement.title}. ${achievement.description}`);
+                    }
                     
                     achievementCard.innerHTML = `
                         <div class="achievement-icon">${achievement.icon}</div>
@@ -1080,9 +1310,27 @@
                     achievementsContainer.appendChild(achievementCard);
                 });
                 
+                // Set role for container
+                achievementsContainer.setAttribute('role', 'list');
+                
                 // Update stats
                 totalClicksDisplay.textContent = count;
                 achievementCountDisplay.textContent = `${unlockedAchievements.length}/${achievements.length}`;
+            }
+            
+            // Improved saving to localStorage with error handling
+            function saveToLocalStorage(key, value) {
+                if (!storageAvailable) return false;
+                
+                try {
+                    localStorage.setItem(key, value);
+                    return true;
+                } catch (e) {
+                    console.warn(`Unable to save ${key} to localStorage:`, e);
+                    storageAvailable = false;
+                    showError("Unable to save progress. Local storage may be full or disabled.");
+                    return false;
+                }
             }
             
             // Check for unlocked achievements
@@ -1114,7 +1362,9 @@
                         showAchievementNotification(achievement);
                         
                         // Save to localStorage
-                        localStorage.setItem('unlockedAchievements', JSON.stringify(unlockedAchievements));
+                        if (storageAvailable) {
+                            saveToLocalStorage('unlockedAchievements', JSON.stringify(unlockedAchievements));
+                        }
                     }
                 });
                 
@@ -1131,28 +1381,38 @@
                 document.querySelector('.achievement-notification .achievement-icon').textContent = achievement.icon;
                 
                 achievementNotification.classList.add('active');
+                achievementNotification.setAttribute('aria-hidden', 'false');
                 
                 // Play pop sound for achievements
-                popSound.currentTime = 0;
-                popSound.volume = 0.7;
-                popSound.play().catch(e => {
-                    // Handle autoplay restrictions
-                });
+                playSound(popSound, 0.7);
                 
                 // Hide notification after 4 seconds
                 setTimeout(() => {
                     achievementNotification.classList.remove('active');
+                    setTimeout(() => {
+                        achievementNotification.setAttribute('aria-hidden', 'true');
+                    }, 500); // After animation completes
                 }, 4000);
             }
             
-            // Toggle achievements panel
+            // Toggle achievements panel with focus management and ARIA updates
             showAchievementsBtn.addEventListener('click', () => {
                 initAchievements();
                 achievementsPanel.classList.add('active');
+                achievementsPanel.setAttribute('aria-hidden', 'false');
+                
+                // Set focus to the close button for accessibility
+                setTimeout(() => closeAchievementsBtn.focus(), 100);
             });
             
             closeAchievementsBtn.addEventListener('click', () => {
                 achievementsPanel.classList.remove('active');
+                setTimeout(() => {
+                    achievementsPanel.setAttribute('aria-hidden', 'true');
+                }, 300); // After animation completes
+                
+                // Return focus to the show button
+                showAchievementsBtn.focus();
             });
             
             // Create indicators around the button
@@ -1200,7 +1460,7 @@
                 progressCircle.style.strokeDashoffset = dashOffset;
             }
             
-            // Ripple effect
+            // Ripple effect with improved touch handling
             function createRipple(event) {
                 const button = event.currentTarget;
                 const circle = document.createElement('div');
@@ -1216,6 +1476,9 @@
                 if (event.type === 'touchstart') {
                     clientX = event.touches[0].clientX;
                     clientY = event.touches[0].clientY;
+                    
+                    // Update last touch time to prevent double triggering
+                    lastTouchTime = Date.now();
                 } else {
                     clientX = event.clientX;
                     clientY = event.clientY;
@@ -1234,15 +1497,19 @@
                 }, 600);
             }
             
-            // Confetti and star effects for milestone clicks
+            // Confetti and star effects for milestone clicks with performance optimization
             function createCelebrationEffects() {
+                // Reduce effects on lower-end devices
+                const particleCount = shouldUseReducedMotion() ? 30 : 60;
+                const starCount = shouldUseReducedMotion() ? 6 : 12;
+                
                 // Confetti
-                for (let i = 0; i < 60; i++) {
+                for (let i = 0; i < particleCount; i++) {
                     createConfetti();
                 }
                 
                 // Stars
-                for (let i = 0; i < 12; i++) {
+                for (let i = 0; i < starCount; i++) {
                     createStar(i);
                 }
                 
@@ -1326,25 +1593,18 @@
                 }, (delay + duration) * 1000);
             }
             
-            // Expansion circle feedback
-            function showFeedbackCircle() {
-                feedbackCircle.style.animation = 'none';
-                void feedbackCircle.offsetWidth; // Trigger reflow
-                feedbackCircle.style.animation = 'feedback-expand 0.8s cubic-bezier(0, 0, 0.2, 1) forwards';
-            }
-            
-            // Flash effect
-            function flashEffect(intensity = 0.3) {
-                visualEffect.style.opacity = intensity.toString();
-                setTimeout(() => {
-                    visualEffect.style.opacity = '0';
-                }, 150);
-            }
-            
             // Update click count with animation
             function updateClickCount() {
                 clickCount.textContent = count;
                 clickCount.classList.add('updated');
+                
+                // Also announce for screen readers on milestones
+                if (count % MILESTONE === 0) {
+                    clickCount.setAttribute('aria-label', `${count} clicks reached. Milestone achieved!`);
+                } else {
+                    clickCount.setAttribute('aria-label', `${count} clicks`);
+                }
+                
                 setTimeout(() => {
                     clickCount.classList.remove('updated');
                 }, 300);
@@ -1359,8 +1619,14 @@
                 nextMilestoneBar.style.width = `${progress}%`;
             }
             
-            // Create particle effects
+            // Create particle effects with performance consideration
             function createParticles(x, y, count = 20, size = 5, color = null) {
+                // Reduce particle count on lower-end devices
+                if (shouldUseReducedMotion()) {
+                    count = Math.floor(count / 3);
+                    if (count === 0) return;
+                }
+                
                 for (let i = 0; i < count; i++) {
                     const particle = document.createElement('div');
                     particle.classList.add('particle');
@@ -1412,6 +1678,36 @@
                 }
             }
             
+            // Cleanup unused animations periodically
+            function cleanupUnusedAnimations() {
+                const particles = document.querySelectorAll('.particle');
+                particles.forEach(particle => {
+                    if (!particle.getAnimations().some(anim => anim.playState === 'running')) {
+                        particle.remove();
+                    }
+                });
+            }
+            
+            // Call cleanup periodically
+            setInterval(cleanupUnusedAnimations, 5000);
+            
+            // Reset confirmation dialog management with ARIA updates
+            function openConfirmDialog() {
+                confirmationDialog.classList.add('active');
+                confirmationDialog.setAttribute('aria-hidden', 'false');
+                // Set focus to the "No" button by default for safety
+                setTimeout(() => confirmNo.focus(), 100);
+            }
+            
+            function closeConfirmDialog() {
+                confirmationDialog.classList.remove('active');
+                setTimeout(() => {
+                    confirmationDialog.setAttribute('aria-hidden', 'true');
+                }, 300);
+                // Return focus to the reset button
+                setTimeout(() => resetButton.focus(), 100);
+            }
+            
             // Reset all progress
             function resetProgress() {
                 // Reset state
@@ -1424,21 +1720,19 @@
                 updateMilestoneProgress();
                 
                 // Save to localStorage
-                localStorage.setItem('clickCount', '0');
-                localStorage.setItem('unlockedAchievements', JSON.stringify([]));
+                if (storageAvailable) {
+                    saveToLocalStorage('clickCount', '0');
+                    saveToLocalStorage('unlockedAchievements', JSON.stringify([]));
+                }
                 
                 // Close dialog
-                confirmationDialog.classList.remove('active');
+                closeConfirmDialog();
                 
                 // Show effect
                 flashEffect(0.3);
                 
                 // Play sound
-                clickSound.currentTime = 0;
-                clickSound.volume = 0.3;
-                clickSound.play().catch(e => {
-                    // Handle autoplay restrictions
-                });
+                playSound(clickSound, 0.3);
             }
             
             // Initialize
@@ -1456,7 +1750,99 @@
                 }, 5000);
             }, 3000);
             
-            // Button events
+            // Handle touch vs click properly
+            function handleInteraction(e) {
+                if (e.type === 'touchstart') {
+                    // Prevent default to avoid double events in some browsers
+                    e.preventDefault();
+                    createRipple(e);
+                    handleButtonClick(e);
+                    
+                    // Set last touch time
+                    lastTouchTime = Date.now();
+                } else if (e.type === 'click') {
+                    // Only handle click if it's not too close to a touch event
+                    if (Date.now() - lastTouchTime > 300) {
+                        createRipple(e);
+                        handleButtonClick(e);
+                    }
+                }
+                
+                // Enable audio if not already enabled
+                if (!audioEnabled) {
+                    enableAudio();
+                }
+            }
+            
+            // Add event listeners with improved handling
+            theButton.addEventListener('touchstart', handleInteraction, { passive: false });
+            theButton.addEventListener('click', handleInteraction);
+            
+            // Reset button event listeners
+            resetButton.addEventListener('click', openConfirmDialog);
+            confirmYes.addEventListener('click', resetProgress);
+            confirmNo.addEventListener('click', closeConfirmDialog);
+            
+            // Prevent scrolling when touching the button on mobile
+            document.body.addEventListener('touchmove', function(e) {
+                if (e.target === theButton || theButton.contains(e.target)) {
+                    e.preventDefault();
+                }
+            }, { passive: false });
+            
+            // Keyboard shortcuts
+            document.addEventListener('keydown', (event) => {
+                keyboardUsed = true;
+                keyboardHint.classList.add('visible');
+                
+                if (event.code === 'Space') {
+                    event.preventDefault();
+                    theButton.click();
+                } else if (event.code === 'KeyA') {
+                    event.preventDefault();
+                    showAchievementsBtn.click();
+                } else if (event.code === 'Escape') {
+                    // Close any open panels
+                    if (achievementsPanel.classList.contains('active')) {
+                        closeAchievementsBtn.click();
+                    }
+                    if (confirmationDialog.classList.contains('active')) {
+                        confirmNo.click();
+                    }
+                }
+                
+                // Enable audio if not already enabled
+                if (!audioEnabled) {
+                    enableAudio();
+                }
+            });
+            
+            // Remove loading indicator when everything is ready
+            loadingIndicator.classList.add('hidden');
+            
+            // Expansion circle feedback
+            function showFeedbackCircle() {
+                feedbackCircle.style.animation = 'none';
+                void feedbackCircle.offsetWidth; // Trigger reflow
+                feedbackCircle.style.animation = 'feedback-expand 0.8s cubic-bezier(0, 0, 0.2, 1) forwards';
+            }
+            
+            // Flash effect
+            function flashEffect(intensity = 0.3) {
+                visualEffect.style.opacity = intensity.toString();
+                setTimeout(() => {
+                    visualEffect.style.opacity = '0';
+                }, 150);
+            }
+            
+            // Add haptic feedback for mobile (if available)
+            function triggerHapticFeedback() {
+                if (navigator.vibrate) {
+                    navigator.vibrate(25);
+                }
+            }
+            
+            // Button click handling
             function handleButtonClick(event) {
                 // Get button position for particle effects
                 if (event) {
@@ -1475,14 +1861,7 @@
                 
                 // Play click sound with dynamic pitch for variety
                 const pitchVariation = 0.9 + (Math.random() * 0.2); // 0.9-1.1
-                clickSound.preservesPitch = false;
-                clickSound.playbackRate = pitchVariation;
-                clickSound.currentTime = 0;
-                clickSound.volume = 0.4;
-                clickSound.play().catch(e => {
-                    // Handle autoplay restrictions
-                    console.log("Audio playback was prevented:", e);
-                });
+                playSound(clickSound, 0.4, pitchVariation);
                 
                 // Visual effects
                 showFeedbackCircle();
@@ -1494,11 +1873,7 @@
                 
                 if (rapidClickCount >= 5) {
                     // Power up sound for rapid clicks
-                    powerSound.currentTime = 0;
-                    powerSound.volume = 0.5;
-                    powerSound.play().catch(e => {
-                        // Handle autoplay restrictions
-                    });
+                    playSound(powerSound, 0.5);
                     
                     // Special visual effect
                     flashEffect(0.4);
@@ -1522,11 +1897,7 @@
                     }
                     
                     // Pop sound for milestones
-                    popSound.currentTime = 0;
-                    popSound.volume = 0.6;
-                    popSound.play().catch(e => {
-                        // Handle autoplay restrictions
-                    });
+                    playSound(popSound, 0.6);
                     
                     // Stronger flash effect for milestones
                     flashEffect(0.5);
@@ -1536,60 +1907,10 @@
                 checkAchievements();
                 
                 // Save count to localStorage
-                localStorage.setItem('clickCount', count.toString());
-            }
-            
-            // Add haptic feedback for mobile (if available)
-            function triggerHapticFeedback() {
-                if (navigator.vibrate) {
-                    navigator.vibrate(25);
+                if (storageAvailable) {
+                    saveToLocalStorage('clickCount', count.toString());
                 }
             }
-            
-            // Add event listeners (mouse & touch)
-            theButton.addEventListener('mousedown', createRipple);
-            theButton.addEventListener('touchstart', (e) => {
-                createRipple(e);
-                triggerHapticFeedback();
-            }, { passive: true });
-            
-            theButton.addEventListener('click', (e) => {
-                e.preventDefault();
-                handleButtonClick(e);
-            });
-            
-            // Reset button event listeners
-            resetButton.addEventListener('click', () => {
-                confirmationDialog.classList.add('active');
-            });
-            
-            confirmYes.addEventListener('click', resetProgress);
-            
-            confirmNo.addEventListener('click', () => {
-                confirmationDialog.classList.remove('active');
-            });
-            
-            // Keyboard shortcuts
-            document.addEventListener('keydown', (event) => {
-                keyboardUsed = true;
-                keyboardHint.classList.add('visible');
-                
-                if (event.code === 'Space') {
-                    event.preventDefault();
-                    theButton.click();
-                } else if (event.code === 'KeyA') {
-                    event.preventDefault();
-                    showAchievementsBtn.click();
-                } else if (event.code === 'Escape') {
-                    // Close any open panels
-                    if (achievementsPanel.classList.contains('active')) {
-                        closeAchievementsBtn.click();
-                    }
-                    if (confirmationDialog.classList.contains('active')) {
-                        confirmNo.click();
-                    }
-                }
-            });
         });
     </script>
 </body>
