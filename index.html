@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Press THE BUTTON, track your clicks, and unlock achievements">
     <title>THE BUTTON</title>
     <link rel="icon" href="favicon.svg" type="image/svg+xml">
     <link rel="apple-touch-icon" href="favicon.svg">
@@ -251,6 +252,41 @@
             transition: all 0.2s ease;
         }
 
+        /* Next milestone indicator */
+        .next-milestone {
+            position: absolute;
+            bottom: -80px;
+            left: 0;
+            width: 100%;
+            text-align: center;
+            font-size: 0.8rem;
+            opacity: 0.7;
+            color: var(--text-color);
+            transition: opacity 0.3s ease;
+        }
+
+        .next-milestone-progress {
+            position: absolute;
+            bottom: -75px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 120px;
+            height: 3px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .next-milestone-bar {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            background: var(--accent-color);
+            width: 0%;
+            transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
         /* Make count pulse when updated */
         .click-count.updated {
             animation: countPulse 0.3s ease-out;
@@ -345,6 +381,9 @@
             font-size: 0.8rem;
             opacity: 0.5;
             transition: opacity 0.3s ease;
+            text-align: center;
+            width: 100%;
+            padding: 0 20px;
         }
 
         footer:hover {
@@ -356,75 +395,156 @@
             text-decoration: none;
         }
 
-        .visual-effect {
+        footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* Reset button */
+        .reset-button {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: none;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: rgba(255, 255, 255, 0.6);
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+        }
+
+        .reset-button:hover {
+            background: rgba(255, 58, 58, 0.1);
+            border-color: rgba(255, 58, 58, 0.2);
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        /* Keyboard shortcut indicator */
+        .keyboard-hint {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 5px;
+            padding: 5px 10px;
+            font-size: 0.8rem;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+
+        .keyboard-hint.visible {
+            opacity: 0.5;
+        }
+
+        .keyboard-hint span {
+            display: inline-block;
+            padding: 2px 5px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 3px;
+            margin: 0 3px;
+        }
+
+        /* Confirmation dialog */
+        .confirmation-dialog {
             position: fixed;
             top: 0;
             left: 0;
-            right: 0;
-            bottom: 0;
-            background: radial-gradient(circle at center, rgba(255, 58, 58, 0.15), transparent 70%);
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
             opacity: 0;
             pointer-events: none;
-            z-index: 100;
-            transition: opacity 0.1s ease;
+            transition: opacity 0.3s ease;
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
         }
 
-        /* Stars for milestone celebrations */
-        .star {
-            position: absolute;
-            width: 0;
-            height: 0;
-            opacity: 0;
-            pointer-events: none;
+        .confirmation-dialog.active {
+            opacity: 1;
+            pointer-events: all;
         }
 
-        @keyframes star-anim {
-            0% {
-                opacity: 1;
-                transform: scale(0) rotate(0deg);
-            }
-            50% {
-                opacity: 1;
-                transform: scale(1) rotate(180deg);
-            }
-            100% {
-                opacity: 0;
-                transform: scale(0.5) rotate(360deg);
-            }
+        .confirmation-content {
+            background: var(--panel-bg);
+            border: 2px solid var(--accent-color);
+            border-radius: 12px;
+            padding: 25px;
+            width: 90%;
+            max-width: 350px;
+            text-align: center;
+            transform: scale(0.8);
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
 
-        /* Counter milestone text */
-        .milestone-text {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%) scale(0);
-            font-size: 3rem;
-            font-weight: 800;
+        .confirmation-dialog.active .confirmation-content {
+            transform: scale(1);
+        }
+
+        .confirmation-content h3 {
+            margin: 0 0 15px 0;
             color: var(--accent-color);
-            text-shadow: 0 0 15px var(--glow-color);
-            z-index: 20;
-            pointer-events: none;
-            opacity: 0;
         }
 
-        @keyframes milestone-popup {
-            0% {
-                transform: translate(-50%, -50%) scale(0);
-                opacity: 0;
-            }
-            50% {
-                transform: translate(-50%, -50%) scale(1.2);
-                opacity: 1;
-            }
-            80% {
-                transform: translate(-50%, -50%) scale(0.9);
-                opacity: 0.9;
-            }
-            100% {
-                transform: translate(-50%, -50%) scale(1);
-                opacity: 0;
-            }
+        .confirmation-content p {
+            margin-bottom: 25px;
+            opacity: 0.9;
+        }
+
+        .confirmation-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .confirmation-button {
+            padding: 8px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            border: none;
+            transition: all 0.2s ease;
+        }
+
+        .confirm-yes {
+            background: var(--accent-color);
+            color: white;
+        }
+
+        .confirm-yes:hover {
+            background: #e02020;
+        }
+
+        .confirm-no {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+
+        .confirm-no:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        /* Particle effects */
+        .particles-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 50;
+        }
+
+        .particle {
+            position: absolute;
+            background: var(--accent-color);
+            border-radius: 50%;
+            opacity: 0;
         }
 
         @media (max-width: 768px) {
@@ -452,6 +572,19 @@
             .indicator-container {
                 width: 300px;
                 height: 300px;
+            }
+
+            .achievements-button {
+                bottom: 75px;
+            }
+
+            .keyboard-hint {
+                bottom: 75px;
+            }
+
+            /* Center footer on mobile */
+            footer {
+                padding-bottom: 50px;
             }
         }
 
@@ -660,6 +793,34 @@
             box-shadow: 0 0 20px rgba(255, 58, 58, 0.4);
             animation-play-state: paused;
         }
+
+        /* Stats display in achievements panel */
+        .achievement-stats {
+            display: flex;
+            justify-content: space-around;
+            padding: 15px 0;
+            border-bottom: 1px solid rgba(255, 58, 58, 0.2);
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .stat-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--accent-color);
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            opacity: 0.7;
+            margin-top: 2px;
+        }
     </style>
 </head>
 <body>
@@ -671,6 +832,11 @@
             <button id="theButton">PUSH</button>
             <div class="feedback-circle" id="feedbackCircle"></div>
             <div class="click-count" id="clickCount">0</div>
+            <div class="next-milestone" id="nextMilestone">
+                <div class="next-milestone-progress">
+                    <div class="next-milestone-bar" id="nextMilestoneBar"></div>
+                </div>
+            </div>
         </div>
     </div>
     
@@ -686,11 +852,32 @@
     <div class="milestone-text" id="milestoneText"></div>
     <div class="visual-effect" id="visualEffect"></div>
     
+    <!-- Reset button -->
+    <button id="resetButton" class="reset-button">Reset Progress</button>
+    
+    <!-- Keyboard hint -->
+    <div class="keyboard-hint" id="keyboardHint">
+        Press <span>Space</span> to push button · <span>A</span> for achievements
+    </div>
+    
+    <!-- Particles container -->
+    <div class="particles-container" id="particlesContainer"></div>
+    
     <!-- Achievements Panel -->
     <div class="achievements-panel" id="achievementsPanel">
         <div class="achievements-header">
             <h2>Achievements</h2>
             <button id="closeAchievements" aria-label="Close achievements panel">×</button>
+        </div>
+        <div class="achievement-stats" id="achievementStats">
+            <div class="stat-item">
+                <div class="stat-value" id="totalClicks">0</div>
+                <div class="stat-label">Total Clicks</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" id="achievementCount">0/8</div>
+                <div class="stat-label">Achievements</div>
+            </div>
         </div>
         <div class="achievements-container" id="achievementsContainer">
             <!-- Achievements will be added here dynamically -->
@@ -703,6 +890,18 @@
         <div class="achievement-content">
             <h3 id="achievementTitle">Achievement Unlocked!</h3>
             <p id="achievementDescription"></p>
+        </div>
+    </div>
+    
+    <!-- Confirmation Dialog -->
+    <div class="confirmation-dialog" id="confirmationDialog">
+        <div class="confirmation-content">
+            <h3>Reset Progress?</h3>
+            <p>This will reset your click count and all achievements. This action cannot be undone.</p>
+            <div class="confirmation-buttons">
+                <button id="confirmNo" class="confirmation-button confirm-no">Cancel</button>
+                <button id="confirmYes" class="confirmation-button confirm-yes">Reset</button>
+            </div>
         </div>
     </div>
     
@@ -738,6 +937,9 @@
             const visualEffect = document.getElementById('visualEffect');
             const progressCircle = document.getElementById('progressCircle');
             const milestoneText = document.getElementById('milestoneText');
+            const nextMilestoneBar = document.getElementById('nextMilestoneBar');
+            const particlesContainer = document.getElementById('particlesContainer');
+            const keyboardHint = document.getElementById('keyboardHint');
             
             // Achievements elements
             const achievementsPanel = document.getElementById('achievementsPanel');
@@ -747,6 +949,14 @@
             const achievementNotification = document.getElementById('achievementNotification');
             const achievementTitle = document.getElementById('achievementTitle');
             const achievementDescription = document.getElementById('achievementDescription');
+            const totalClicksDisplay = document.getElementById('totalClicks');
+            const achievementCountDisplay = document.getElementById('achievementCount');
+            
+            // Reset elements
+            const resetButton = document.getElementById('resetButton');
+            const confirmationDialog = document.getElementById('confirmationDialog');
+            const confirmYes = document.getElementById('confirmYes');
+            const confirmNo = document.getElementById('confirmNo');
             
             // Audio
             const clickSound = document.getElementById('clickSound');
@@ -776,6 +986,7 @@
             const MILESTONE = 50; // Clicks for milestone celebration
             const MAX_INDICATORS = 16;
             const CIRCLE_CIRCUMFERENCE = 502; // 2πr where r=80
+            let keyboardUsed = false;
             
             // Load saved click count from localStorage
             const savedCount = localStorage.getItem('clickCount');
@@ -783,6 +994,7 @@
                 count = parseInt(savedCount, 10);
                 updateClickCount();
                 updateIndicators();
+                updateMilestoneProgress();
             }
             
             // Achievements system
@@ -867,6 +1079,10 @@
                     
                     achievementsContainer.appendChild(achievementCard);
                 });
+                
+                // Update stats
+                totalClicksDisplay.textContent = count;
+                achievementCountDisplay.textContent = `${unlockedAchievements.length}/${achievements.length}`;
             }
             
             // Check for unlocked achievements
@@ -1134,14 +1350,128 @@
                 }, 300);
             }
             
+            // Update milestone progress bar
+            function updateMilestoneProgress() {
+                const nextMilestoneValue = Math.ceil(count / MILESTONE) * MILESTONE;
+                const prevMilestoneValue = nextMilestoneValue - MILESTONE;
+                const progress = ((count - prevMilestoneValue) / MILESTONE) * 100;
+                
+                nextMilestoneBar.style.width = `${progress}%`;
+            }
+            
+            // Create particle effects
+            function createParticles(x, y, count = 20, size = 5, color = null) {
+                for (let i = 0; i < count; i++) {
+                    const particle = document.createElement('div');
+                    particle.classList.add('particle');
+                    
+                    // Random size between 3 and max size
+                    const particleSize = Math.random() * size + 3;
+                    
+                    // Set particle properties
+                    particle.style.width = `${particleSize}px`;
+                    particle.style.height = `${particleSize}px`;
+                    
+                    // Use provided color or random from confetti colors
+                    if (color) {
+                        particle.style.backgroundColor = color;
+                    } else {
+                        particle.style.backgroundColor = confettiColors[Math.floor(Math.random() * confettiColors.length)];
+                    }
+                    
+                    // Set starting position
+                    particle.style.left = `${x}px`;
+                    particle.style.top = `${y}px`;
+                    
+                    particlesContainer.appendChild(particle);
+                    
+                    // Calculate random direction and speed
+                    const angle = Math.random() * Math.PI * 2;
+                    const speed = Math.random() * 100 + 50;
+                    const distance = Math.random() * 100 + 50;
+                    const duration = Math.random() * 1.5 + 1;
+                    
+                    // Animate particle
+                    const animation = particle.animate([
+                        { 
+                            transform: 'translate(0, 0) scale(1)', 
+                            opacity: 1 
+                        },
+                        { 
+                            transform: `translate(${Math.cos(angle) * distance}px, ${Math.sin(angle) * distance}px) scale(0)`, 
+                            opacity: 0 
+                        }
+                    ], {
+                        duration: duration * 1000,
+                        easing: 'cubic-bezier(0.1, 0.8, 0.2, 1)'
+                    });
+                    
+                    animation.onfinish = () => {
+                        particle.remove();
+                    };
+                }
+            }
+            
+            // Reset all progress
+            function resetProgress() {
+                // Reset state
+                count = 0;
+                unlockedAchievements = [];
+                
+                // Update UI
+                updateClickCount();
+                updateIndicators();
+                updateMilestoneProgress();
+                
+                // Save to localStorage
+                localStorage.setItem('clickCount', '0');
+                localStorage.setItem('unlockedAchievements', JSON.stringify([]));
+                
+                // Close dialog
+                confirmationDialog.classList.remove('active');
+                
+                // Show effect
+                flashEffect(0.3);
+                
+                // Play sound
+                clickSound.currentTime = 0;
+                clickSound.volume = 0.3;
+                clickSound.play().catch(e => {
+                    // Handle autoplay restrictions
+                });
+            }
+            
             // Initialize
             createIndicators();
             
+            // Show keyboard hint after a delay
+            setTimeout(() => {
+                keyboardHint.classList.add('visible');
+                
+                // Hide hint after 5 seconds if no keyboard interaction
+                setTimeout(() => {
+                    if (!keyboardUsed) {
+                        keyboardHint.classList.remove('visible');
+                    }
+                }, 5000);
+            }, 3000);
+            
             // Button events
-            function handleButtonClick() {
+            function handleButtonClick(event) {
+                // Get button position for particle effects
+                if (event) {
+                    const rect = theButton.getBoundingClientRect();
+                    const buttonCenterX = rect.left + rect.width / 2;
+                    const buttonCenterY = rect.top + rect.height / 2;
+                    
+                    // Create particles from button center
+                    createParticles(buttonCenterX, buttonCenterY, 10, 4);
+                }
+                
                 // Increment count
                 count++;
                 updateClickCount();
+                updateMilestoneProgress();
                 
                 // Play click sound with dynamic pitch for variety
                 const pitchVariation = 0.9 + (Math.random() * 0.2); // 0.9-1.1
@@ -1185,6 +1515,12 @@
                 if (count % MILESTONE === 0) {
                     createCelebrationEffects();
                     
+                    // Create more particles for milestones
+                    if (event) {
+                        const rect = theButton.getBoundingClientRect();
+                        createParticles(rect.left + rect.width / 2, rect.top + rect.height / 2, 30, 8);
+                    }
+                    
                     // Pop sound for milestones
                     popSound.currentTime = 0;
                     popSound.volume = 0.6;
@@ -1219,14 +1555,39 @@
             
             theButton.addEventListener('click', (e) => {
                 e.preventDefault();
-                handleButtonClick();
+                handleButtonClick(e);
             });
             
-            // Spacebar support
+            // Reset button event listeners
+            resetButton.addEventListener('click', () => {
+                confirmationDialog.classList.add('active');
+            });
+            
+            confirmYes.addEventListener('click', resetProgress);
+            
+            confirmNo.addEventListener('click', () => {
+                confirmationDialog.classList.remove('active');
+            });
+            
+            // Keyboard shortcuts
             document.addEventListener('keydown', (event) => {
+                keyboardUsed = true;
+                keyboardHint.classList.add('visible');
+                
                 if (event.code === 'Space') {
                     event.preventDefault();
                     theButton.click();
+                } else if (event.code === 'KeyA') {
+                    event.preventDefault();
+                    showAchievementsBtn.click();
+                } else if (event.code === 'Escape') {
+                    // Close any open panels
+                    if (achievementsPanel.classList.contains('active')) {
+                        closeAchievementsBtn.click();
+                    }
+                    if (confirmationDialog.classList.contains('active')) {
+                        confirmNo.click();
+                    }
                 }
             });
         });
