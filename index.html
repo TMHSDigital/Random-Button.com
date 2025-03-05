@@ -96,6 +96,7 @@
             padding: 2rem;
             z-index: 10;
             position: relative;
+            overflow: visible;
         }
 
         h1 {
@@ -281,11 +282,10 @@
             left: 50%;
             transform: translateX(-50%);
             width: 120px;
-            height: 6px; /* Increased from 3px for better visibility */
+            height: 3px;
             background: rgba(255, 255, 255, 0.1);
-            border-radius: 6px; /* Increased from 3px */
+            border-radius: 3px;
             overflow: hidden;
-            box-shadow: 0 0 5px rgba(0, 0, 0, 0.3); /* Added subtle shadow */
         }
 
         .next-milestone-bar {
@@ -296,7 +296,6 @@
             background: var(--accent-color);
             width: 0%;
             transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: 0 0 8px var(--glow-color); /* Added glow effect */
         }
 
         /* Make count pulse when updated */
@@ -398,7 +397,6 @@
             text-align: center;
             width: 100%;
             padding: 0 20px;
-            z-index: 50; /* Lower than keyboard hint */
         }
 
         footer:hover {
@@ -441,88 +439,25 @@
         .keyboard-hint {
             position: fixed;
             bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: rgba(20, 20, 20, 0.7);
-            border-radius: 8px;
-            padding: 8px 15px;
-            font-size: 0.9rem;
+            left: 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 5px;
+            padding: 5px 10px;
+            font-size: 0.8rem;
             opacity: 0;
             transition: opacity 0.5s ease;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
-            z-index: 100;
         }
 
         .keyboard-hint.visible {
-            opacity: 0.9;
+            opacity: 0.5;
         }
 
         .keyboard-hint span {
             display: inline-block;
-            padding: 3px 7px;
-            border: 1px solid rgba(255, 255, 255, 0.4);
-            border-radius: 4px;
-            margin: 0 4px;
-            background: rgba(255, 255, 255, 0.1);
-            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
-        }
-        
-        @media (max-width: 768px) {
-            h1 {
-                font-size: 2rem;
-                margin-bottom: 3rem;
-            }
-
-            .button-wrapper {
-                width: 200px;
-                height: 200px;
-            }
-            
-            #theButton {
-                width: 160px;
-                height: 160px;
-                font-size: 1.2rem;
-            }
-            
-            .feedback-circle {
-                width: 220px;
-                height: 220px;
-            }
-
-            .indicator-container {
-                width: 300px;
-                height: 300px;
-            }
-            
-            /* Improved mobile progress bar */
-            .next-milestone-progress {
-                width: 140px; /* Wider on mobile */
-                height: 8px; /* Taller on mobile */
-                bottom: -75px;
-            }
-            
-            .next-milestone-bar {
-                box-shadow: 0 0 10px var(--glow-color); /* Stronger glow on mobile */
-            }
-            
-            .achievements-button {
-                bottom: 75px;
-            }
-
-            /* Adjust keyboard hint position on mobile */
-            .keyboard-hint {
-                bottom: 50px; /* Move up above footer */
-                padding: 6px 12px; /* Slightly smaller padding on mobile */
-                width: 90%; /* Control width on mobile */
-                max-width: 320px;
-            }
-
-            /* Center footer on mobile */
-            footer {
-                padding-bottom: 50px;
-                bottom: 2px; /* Move up slightly */
-            }
+            padding: 2px 5px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 3px;
+            margin: 0 3px;
         }
 
         /* Confirmation dialog */
@@ -545,7 +480,7 @@
         }
 
         .confirmation-dialog.active {
-            opacity: 1;
+                opacity: 1;
             pointer-events: all;
         }
 
@@ -623,6 +558,47 @@
             background: var(--accent-color);
             border-radius: 50%;
             opacity: 0;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2rem;
+                margin-bottom: 3rem;
+            }
+
+            .button-wrapper {
+                width: 200px;
+                height: 200px;
+            }
+            
+            #theButton {
+                width: 160px;
+                height: 160px;
+                font-size: 1.2rem;
+            }
+            
+            .feedback-circle {
+                width: 220px;
+                height: 220px;
+            }
+
+            .indicator-container {
+                width: 300px;
+                height: 300px;
+            }
+
+            .achievements-button {
+                bottom: 75px;
+            }
+
+            .keyboard-hint {
+                bottom: 75px;
+            }
+
+            /* Center footer on mobile */
+            footer {
+                padding-bottom: 50px;
+            }
         }
 
         /* Achievements Panel */
@@ -1179,18 +1155,18 @@
                 audioEnabled = true;
                 
                 // Try to play all sounds muted to "warm them up"
-                [clickSound, powerSound, popSound].forEach(sound => {
+            [clickSound, powerSound, popSound].forEach(sound => {
                     try {
-                        sound.muted = true;
+                sound.muted = true;
                         const playPromise = sound.play();
                         if (playPromise !== undefined) {
                             playPromise.then(() => {
-                                sound.pause();
-                                sound.currentTime = 0;
-                                sound.muted = false;
-                            }).catch(e => {
-                                sound.muted = false;
-                            });
+                    sound.pause();
+                    sound.currentTime = 0;
+                    sound.muted = false;
+                }).catch(e => {
+                    sound.muted = false;
+                });
                         }
                     } catch(e) {
                         sound.muted = false;
@@ -1358,46 +1334,592 @@
                     localStorage.setItem(key, value);
                     return true;
                 } catch (e) {
-                    console.warn(`Error saving to localStorage: ${e}`);
+                    console.warn(`Unable to save ${key} to localStorage:`, e);
+                    storageAvailable = false;
+                    showError("Unable to save progress. Local storage may be full or disabled.");
                     return false;
                 }
             }
             
-            // Update click count
-            function updateClickCount() {
-                count++;
-                clickCount.textContent = count;
-                saveToLocalStorage('clickCount', count);
+            // Check for unlocked achievements
+            function checkAchievements() {
+                let newlyUnlocked = false;
+                
+                achievements.forEach(achievement => {
+                    // Skip already unlocked achievements
+                    if (unlockedAchievements.includes(achievement.id)) {
+                        return;
+                    }
+                    
+                    // Check if achievement should be unlocked
+                    let shouldUnlock = false;
+                    
+                    if (achievement.id === 'speedster') {
+                        // Special case for rapid clicks
+                        shouldUnlock = rapidClickCount >= 5;
+                    } else {
+                        // Regular count-based achievements
+                        shouldUnlock = count >= achievement.requirement;
+                    }
+                    
+                    if (shouldUnlock) {
+                        unlockedAchievements.push(achievement.id);
+                        newlyUnlocked = true;
+                        
+                        // Show notification
+                        showAchievementNotification(achievement);
+                        
+                        // Save to localStorage
+                        if (storageAvailable) {
+                            saveToLocalStorage('unlockedAchievements', JSON.stringify(unlockedAchievements));
+                        }
+                    }
+                });
+                
+                // Update achievements panel if open
+                if (newlyUnlocked && achievementsPanel.classList.contains('active')) {
+                    initAchievements();
+                }
             }
             
-            // Update indicators
+            // Show achievement notification
+            function showAchievementNotification(achievement) {
+                achievementTitle.textContent = `${achievement.title} Unlocked!`;
+                achievementDescription.textContent = achievement.description;
+                document.querySelector('.achievement-notification .achievement-icon').textContent = achievement.icon;
+                
+                achievementNotification.classList.add('active');
+                achievementNotification.setAttribute('aria-hidden', 'false');
+                
+                // Play pop sound for achievements
+                playSound(popSound, 0.7);
+                
+                // Hide notification after 4 seconds
+                setTimeout(() => {
+                    achievementNotification.classList.remove('active');
+                    setTimeout(() => {
+                        achievementNotification.setAttribute('aria-hidden', 'true');
+                    }, 500); // After animation completes
+                }, 4000);
+            }
+            
+            // Toggle achievements panel with focus management and ARIA updates
+            showAchievementsBtn.addEventListener('click', () => {
+                initAchievements();
+                achievementsPanel.classList.add('active');
+                achievementsPanel.setAttribute('aria-hidden', 'false');
+                
+                // Set focus to the close button for accessibility
+                setTimeout(() => closeAchievementsBtn.focus(), 100);
+            });
+            
+            closeAchievementsBtn.addEventListener('click', () => {
+                achievementsPanel.classList.remove('active');
+                setTimeout(() => {
+                    achievementsPanel.setAttribute('aria-hidden', 'true');
+                }, 300); // After animation completes
+                
+                // Return focus to the show button
+                showAchievementsBtn.focus();
+            });
+            
+            // Create indicators around the button
+            function createIndicators() {
+                indicatorContainer.innerHTML = '';
+                
+                for (let i = 0; i < MAX_INDICATORS; i++) {
+                    const indicator = document.createElement('div');
+                    indicator.classList.add('indicator');
+                    
+                    // Position in a circle
+                    const angle = (i / MAX_INDICATORS) * 360;
+                    const radians = angle * (Math.PI / 180);
+                    const x = Math.cos(radians) * 175 + 175;
+                    const y = Math.sin(radians) * 175 + 175;
+                    
+                    indicator.style.left = `${x}px`;
+                    indicator.style.top = `${y}px`;
+                    indicator.style.transform = `rotate(${angle}deg)`;
+                    
+                    indicatorContainer.appendChild(indicator);
+                }
+            }
+            
+            // Update indicators based on click count
             function updateIndicators() {
-                const progressPercentage = (count / MILESTONE) * 100;
-                const strokeDashoffset = CIRCLE_CIRCUMFERENCE - (CIRCLE_CIRCUMFERENCE * progressPercentage / 100);
-                progressCircle.style.strokeDashoffset = strokeDashoffset;
+                const indicators = document.querySelectorAll('.indicator');
+                const modCount = count % (MILESTONE * 2); // Reset visuals after 100 clicks
+                const progress = modCount / (MILESTONE * 2);
+                const activeCount = Math.floor(progress * indicators.length);
                 
-                if (count >= MILESTONE) {
-                    updateMilestoneProgress();
-                }
+                indicators.forEach((indicator, index) => {
+                    if (index < activeCount) {
+                        const intensity = Math.min(100, 30 + (index / indicators.length) * 70);
+                        indicator.style.backgroundColor = `rgba(255, ${intensity}, ${intensity}, 0.8)`;
+                        indicator.classList.add('active');
+                    } else {
+                        indicator.style.backgroundColor = 'rgba(255, 255, 255, 0.15)';
+                        indicator.classList.remove('active');
+                    }
+                });
+                
+                // Update circular progress
+                const dashOffset = CIRCLE_CIRCUMFERENCE - (progress * CIRCLE_CIRCUMFERENCE);
+                progressCircle.style.strokeDashoffset = dashOffset;
             }
             
-            // Update milestone progress
+            // Ripple effect with improved touch handling
+            function createRipple(event) {
+                const button = event.currentTarget;
+                const circle = document.createElement('div');
+                const diameter = Math.max(button.clientWidth, button.clientHeight);
+                
+                circle.classList.add('ripple');
+                circle.style.width = circle.style.height = `${diameter}px`;
+                
+                const rect = button.getBoundingClientRect();
+                
+                // For touch devices
+                let clientX, clientY;
+                if (event.type === 'touchstart') {
+                    clientX = event.touches[0].clientX;
+                    clientY = event.touches[0].clientY;
+                    
+                    // Update last touch time to prevent double triggering
+                    lastTouchTime = Date.now();
+                } else {
+                    clientX = event.clientX;
+                    clientY = event.clientY;
+                }
+                
+                const offsetX = clientX - rect.left - diameter / 2;
+                const offsetY = clientY - rect.top - diameter / 2;
+                
+                circle.style.left = `${offsetX}px`;
+                circle.style.top = `${offsetY}px`;
+                
+                button.appendChild(circle);
+                
+                setTimeout(() => {
+                    circle.remove();
+                }, 600);
+            }
+            
+            // Confetti and star effects for milestone clicks with performance optimization
+            function createCelebrationEffects() {
+                // Reduce effects on lower-end devices
+                const particleCount = shouldUseReducedMotion() ? 30 : 60;
+                const starCount = shouldUseReducedMotion() ? 6 : 12;
+                
+                // Confetti
+                for (let i = 0; i < particleCount; i++) {
+                    createConfetti();
+                }
+                
+                // Stars
+                for (let i = 0; i < starCount; i++) {
+                    createStar(i);
+                }
+                
+                // Show milestone text
+                milestoneText.textContent = count;
+                milestoneText.style.animation = 'none';
+                void milestoneText.offsetWidth; // Trigger reflow
+                milestoneText.style.animation = 'milestone-popup 2s ease-out forwards';
+            }
+            
+            function createConfetti() {
+                const confetti = document.createElement('div');
+                confetti.classList.add('confetti');
+                
+                const size = Math.random() * 10 + 5;
+                const color = confettiColors[Math.floor(Math.random() * confettiColors.length)];
+                
+                confetti.style.width = `${size}px`;
+                confetti.style.height = `${size}px`;
+                confetti.style.backgroundColor = color;
+                confetti.style.left = `${Math.random() * 100}%`;
+                confetti.style.top = `${Math.random() * 30}%`;
+                confetti.style.borderRadius = Math.random() > 0.5 ? '50%' : '0';
+                
+                document.body.appendChild(confetti);
+                
+                // Animate
+                const angle = Math.random() * 360;
+                const distance = 500 + Math.random() * 500;
+                const duration = 1 + Math.random() * 3;
+                
+                confetti.animate([
+                    { transform: 'translate(0, 0) rotate(0deg)', opacity: 1 },
+                    { transform: `translate(${Math.cos(angle) * distance}px, ${Math.sin(angle) * distance}px) rotate(${Math.random() * 720}deg)`, opacity: 0 }
+                ], {
+                    duration: duration * 1000,
+                    easing: 'cubic-bezier(0,0,0.2,1)'
+                });
+                
+                setTimeout(() => {
+                    confetti.remove();
+                }, duration * 1000);
+            }
+            
+            function createStar(index) {
+                const star = document.createElement('div');
+                star.classList.add('star');
+                
+                // Create star shape using before/after pseudos
+                star.innerHTML = `
+                    <svg width="50" height="50" viewBox="0 0 51 48">
+                        <path fill="${confettiColors[index % confettiColors.length]}" 
+                              d="M25.5 0L31.7 18.6H51L35.2 30.2L41.5 48L25.5 36.8L9.5 48L15.8 30.2L0 18.6H19.3L25.5 0Z"/>
+                    </svg>
+                `;
+                
+                // Position at random locations
+                const x = (Math.random() * 80) + 10; // 10-90%
+                const y = (Math.random() * 80) + 10; // 10-90%
+                star.style.left = `${x}%`;
+                star.style.top = `${y}%`;
+                
+                document.body.appendChild(star);
+                
+                // Animate
+                const delay = Math.random() * 0.5;
+                const duration = 1 + Math.random();
+                
+                star.animate([
+                    { opacity: 0, transform: 'scale(0) rotate(0deg)' },
+                    { opacity: 1, transform: 'scale(1) rotate(180deg)' },
+                    { opacity: 0, transform: 'scale(0.5) rotate(360deg)' }
+                ], {
+                    delay: delay * 1000,
+                    duration: duration * 1000,
+                    easing: 'cubic-bezier(0.22, 0.61, 0.36, 1)'
+                });
+                
+                setTimeout(() => {
+                    star.remove();
+                }, (delay + duration) * 1000);
+            }
+            
+            // Update click count with animation
+            function updateClickCount() {
+                clickCount.textContent = count;
+                clickCount.classList.add('updated');
+                
+                // Also announce for screen readers on milestones
+                if (count % MILESTONE === 0) {
+                    clickCount.setAttribute('aria-label', `${count} clicks reached. Milestone achieved!`);
+                } else {
+                    clickCount.setAttribute('aria-label', `${count} clicks`);
+                }
+                
+                setTimeout(() => {
+                    clickCount.classList.remove('updated');
+                }, 300);
+            }
+            
+            // Update milestone progress bar
             function updateMilestoneProgress() {
-                const progressPercentage = (count / MILESTONE) * 100;
-                nextMilestoneBar.style.width = `${progressPercentage}%`;
+                const nextMilestoneValue = Math.ceil(count / MILESTONE) * MILESTONE;
+                const prevMilestoneValue = nextMilestoneValue - MILESTONE;
+                const progress = ((count - prevMilestoneValue) / MILESTONE) * 100;
                 
-                if (count >= MILESTONE) {
-                    showConfetti();
+                nextMilestoneBar.style.width = `${progress}%`;
+            }
+            
+            // Create particle effects with performance consideration
+            function createParticles(x, y, count = 20, size = 5, color = null) {
+                // Reduce particle count on lower-end devices
+                if (shouldUseReducedMotion()) {
+                    count = Math.floor(count / 3);
+                    if (count === 0) return;
+                }
+                
+                for (let i = 0; i < count; i++) {
+                    const particle = document.createElement('div');
+                    particle.classList.add('particle');
+                    
+                    // Random size between 3 and max size
+                    const particleSize = Math.random() * size + 3;
+                    
+                    // Set particle properties
+                    particle.style.width = `${particleSize}px`;
+                    particle.style.height = `${particleSize}px`;
+                    
+                    // Use provided color or random from confetti colors
+                    if (color) {
+                        particle.style.backgroundColor = color;
+                    } else {
+                        particle.style.backgroundColor = confettiColors[Math.floor(Math.random() * confettiColors.length)];
+                    }
+                    
+                    // Set starting position
+                    particle.style.left = `${x}px`;
+                    particle.style.top = `${y}px`;
+                    
+                    particlesContainer.appendChild(particle);
+                    
+                    // Calculate random direction and speed
+                    const angle = Math.random() * Math.PI * 2;
+                    const speed = Math.random() * 100 + 50;
+                    const distance = Math.random() * 100 + 50;
+                    const duration = Math.random() * 1.5 + 1;
+                    
+                    // Animate particle
+                    const animation = particle.animate([
+                        { 
+                            transform: 'translate(0, 0) scale(1)', 
+                            opacity: 1 
+                        },
+                        { 
+                            transform: `translate(${Math.cos(angle) * distance}px, ${Math.sin(angle) * distance}px) scale(0)`, 
+                            opacity: 0 
+                        }
+                    ], {
+                        duration: duration * 1000,
+                        easing: 'cubic-bezier(0.1, 0.8, 0.2, 1)'
+                    });
+                    
+                    animation.onfinish = () => {
+                        particle.remove();
+                    };
                 }
             }
             
-            // Show confetti
-            function showConfetti() {
-                // Implementation of showConfetti function
+            // Cleanup unused animations periodically
+            function cleanupUnusedAnimations() {
+                const particles = document.querySelectorAll('.particle');
+                particles.forEach(particle => {
+                    if (!particle.getAnimations().some(anim => anim.playState === 'running')) {
+                        particle.remove();
+                    }
+                });
             }
             
-            // Rest of the existing code...
+            // Call cleanup periodically
+            setInterval(cleanupUnusedAnimations, 5000);
+            
+            // Reset confirmation dialog management with ARIA updates
+            function openConfirmDialog() {
+                confirmationDialog.classList.add('active');
+                confirmationDialog.setAttribute('aria-hidden', 'false');
+                // Set focus to the "No" button by default for safety
+                setTimeout(() => confirmNo.focus(), 100);
+            }
+            
+            function closeConfirmDialog() {
+                confirmationDialog.classList.remove('active');
+                setTimeout(() => {
+                    confirmationDialog.setAttribute('aria-hidden', 'true');
+                }, 300);
+                // Return focus to the reset button
+                setTimeout(() => resetButton.focus(), 100);
+            }
+            
+            // Reset all progress
+            function resetProgress() {
+                // Reset state
+                count = 0;
+                unlockedAchievements = [];
+                
+                // Update UI
+                updateClickCount();
+                updateIndicators();
+                updateMilestoneProgress();
+                
+                // Save to localStorage
+                if (storageAvailable) {
+                    saveToLocalStorage('clickCount', '0');
+                    saveToLocalStorage('unlockedAchievements', JSON.stringify([]));
+                }
+                
+                // Close dialog
+                closeConfirmDialog();
+                
+                // Show effect
+                flashEffect(0.3);
+                
+                // Play sound
+                playSound(clickSound, 0.3);
+            }
+            
+            // Initialize
+            createIndicators();
+            
+            // Show keyboard hint after a delay
+            setTimeout(() => {
+                keyboardHint.classList.add('visible');
+                
+                // Hide hint after 5 seconds if no keyboard interaction
+                setTimeout(() => {
+                    if (!keyboardUsed) {
+                        keyboardHint.classList.remove('visible');
+                    }
+                }, 5000);
+            }, 3000);
+            
+            // Handle touch vs click properly
+            function handleInteraction(e) {
+                if (e.type === 'touchstart') {
+                    // Prevent default to avoid double events in some browsers
+                    e.preventDefault();
+                    createRipple(e);
+                    handleButtonClick(e);
+                    
+                    // Set last touch time
+                    lastTouchTime = Date.now();
+                } else if (e.type === 'click') {
+                    // Only handle click if it's not too close to a touch event
+                    if (Date.now() - lastTouchTime > 300) {
+                        createRipple(e);
+                        handleButtonClick(e);
+                    }
+                }
+                
+                // Enable audio if not already enabled
+                if (!audioEnabled) {
+                    enableAudio();
+                }
+            }
+            
+            // Add event listeners with improved handling
+            theButton.addEventListener('touchstart', handleInteraction, { passive: false });
+            theButton.addEventListener('click', handleInteraction);
+            
+            // Reset button event listeners
+            resetButton.addEventListener('click', openConfirmDialog);
+            confirmYes.addEventListener('click', resetProgress);
+            confirmNo.addEventListener('click', closeConfirmDialog);
+            
+            // Prevent scrolling when touching the button on mobile
+            document.body.addEventListener('touchmove', function(e) {
+                if (e.target === theButton || theButton.contains(e.target)) {
+                    e.preventDefault();
+                }
+            }, { passive: false });
+            
+            // Keyboard shortcuts
+            document.addEventListener('keydown', (event) => {
+                keyboardUsed = true;
+                keyboardHint.classList.add('visible');
+                
+                if (event.code === 'Space') {
+                    event.preventDefault();
+                    theButton.click();
+                } else if (event.code === 'KeyA') {
+                    event.preventDefault();
+                    showAchievementsBtn.click();
+                } else if (event.code === 'Escape') {
+                    // Close any open panels
+                    if (achievementsPanel.classList.contains('active')) {
+                        closeAchievementsBtn.click();
+                    }
+                    if (confirmationDialog.classList.contains('active')) {
+                        confirmNo.click();
+                    }
+                }
+                
+                // Enable audio if not already enabled
+                if (!audioEnabled) {
+                    enableAudio();
+                }
+            });
+            
+            // Remove loading indicator when everything is ready
+            loadingIndicator.classList.add('hidden');
+            
+            // Expansion circle feedback
+            function showFeedbackCircle() {
+                feedbackCircle.style.animation = 'none';
+                void feedbackCircle.offsetWidth; // Trigger reflow
+                feedbackCircle.style.animation = 'feedback-expand 0.8s cubic-bezier(0, 0, 0.2, 1) forwards';
+            }
+            
+            // Flash effect
+            function flashEffect(intensity = 0.3) {
+                visualEffect.style.opacity = intensity.toString();
+                setTimeout(() => {
+                    visualEffect.style.opacity = '0';
+                }, 150);
+            }
+            
+            // Add haptic feedback for mobile (if available)
+            function triggerHapticFeedback() {
+                if (navigator.vibrate) {
+                    navigator.vibrate(25);
+                }
+            }
+            
+            // Button click handling
+            function handleButtonClick(event) {
+                // Get button position for particle effects
+                if (event) {
+                    const rect = theButton.getBoundingClientRect();
+                    const buttonCenterX = rect.left + rect.width / 2;
+                    const buttonCenterY = rect.top + rect.height / 2;
+                    
+                    // Create particles from button center
+                    createParticles(buttonCenterX, buttonCenterY, 10, 4);
+                }
+                
+                // Increment count
+                count++;
+                updateClickCount();
+                updateMilestoneProgress();
+                
+                // Play click sound with dynamic pitch for variety
+                const pitchVariation = 0.9 + (Math.random() * 0.2); // 0.9-1.1
+                playSound(clickSound, 0.4, pitchVariation);
+                
+                // Visual effects
+                showFeedbackCircle();
+                updateIndicators();
+                
+                // Handle rapid clicks
+                rapidClickCount++;
+                clearTimeout(consecutiveClickTimer);
+                
+                if (rapidClickCount >= 5) {
+                    // Power up sound for rapid clicks
+                    playSound(powerSound, 0.5);
+                    
+                    // Special visual effect
+                    flashEffect(0.4);
+                    
+                    // Reset rapid click counter
+                    rapidClickCount = 0;
+                }
+                
+                consecutiveClickTimer = setTimeout(() => {
+                    rapidClickCount = 0;
+                }, 1000);
+                
+                // Milestone celebrations
+                if (count % MILESTONE === 0) {
+                    createCelebrationEffects();
+                    
+                    // Create more particles for milestones
+                    if (event) {
+                        const rect = theButton.getBoundingClientRect();
+                        createParticles(rect.left + rect.width / 2, rect.top + rect.height / 2, 30, 8);
+                    }
+                    
+                    // Pop sound for milestones
+                    playSound(popSound, 0.6);
+                    
+                    // Stronger flash effect for milestones
+                    flashEffect(0.5);
+                }
+                
+                // Check for unlocked achievements
+                checkAchievements();
+                
+                // Save count to localStorage
+                if (storageAvailable) {
+                    saveToLocalStorage('clickCount', count.toString());
+                }
+            }
         });
     </script>
 </body>
-</html>
+</html> 
