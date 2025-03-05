@@ -3,362 +3,338 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>THE RANDOM BUTTON</title>
-    <link rel="stylesheet" href="styles.css">
+    <title>THE BUTTON</title>
     <link rel="icon" href="favicon.svg" type="image/svg+xml">
     <link rel="apple-touch-icon" href="favicon.svg">
-    <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#ff3a3a">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;600;800&display=swap" rel="stylesheet">
     <style>
-        .highlight {
-            color: var(--primary-color);
-            text-shadow: 0 0 10px var(--primary-color);
+        :root {
+            --bg-color: #121212;
+            --accent-color: #ff3a3a;
+            --text-color: #ffffff;
+            --shadow-color: rgba(255, 58, 58, 0.8);
         }
-        
-        .flash {
-            position: fixed;
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        .container {
+            text-align: center;
+            max-width: 100%;
+            padding: 2rem;
+            z-index: 10;
+        }
+
+        h1 {
+            font-size: 2rem;
+            margin-bottom: 3rem;
+            font-weight: 800;
+            letter-spacing: 2px;
+            opacity: 0.9;
+        }
+
+        .button-wrapper {
+            position: relative;
+            margin: 2rem auto;
+            width: 200px;
+            height: 200px;
+        }
+
+        .button-outer {
+            position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: white;
-            opacity: 0;
-            z-index: 9999;
-            pointer-events: none;
-            transition: opacity 0.1s ease;
-        }
-        
-        .category {
-            font-size: 0.9rem;
-            font-weight: 700;
-            letter-spacing: 2px;
-            color: var(--primary-color);
-            display: inline-block;
-            margin-bottom: 0.5rem;
-            border-bottom: 1px solid var(--primary-color);
-            padding-bottom: 4px;
-            text-transform: uppercase;
-        }
-        
-        .particle {
-            position: fixed;
-            background-color: var(--primary-color);
             border-radius: 50%;
-            opacity: 0.6;
-            pointer-events: none;
-            animation: float linear infinite;
-            z-index: -1;
+            background: rgba(255, 58, 58, 0.2);
+            animation: pulse 2s infinite;
         }
-        
-        @keyframes float {
+
+        @keyframes pulse {
             0% {
-                transform: translateY(0) rotate(0deg);
-                opacity: 0.6;
+                transform: scale(1);
+                opacity: 1;
+            }
+            50% {
+                transform: scale(1.1);
+                opacity: 0.5;
             }
             100% {
-                transform: translateY(-100vh) rotate(360deg);
-                opacity: 0;
+                transform: scale(1);
+                opacity: 1;
             }
         }
-        
+
+        #theButton {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 160px;
+            height: 160px;
+            border-radius: 50%;
+            background: radial-gradient(circle at 30% 30%, #ff5252, #b71c1c);
+            border: none;
+            box-shadow: 
+                0 0 25px var(--shadow-color),
+                0 8px 0 #8b0000,
+                0 8px 15px rgba(0, 0, 0, 0.8);
+            cursor: pointer;
+            transition: all 0.1s ease;
+            color: white;
+            font-size: 1.3rem;
+            font-weight: 600;
+            letter-spacing: 1px;
+            overflow: hidden;
+            user-select: none;
+            -webkit-user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        #theButton:focus {
+            outline: none;
+        }
+
+        #theButton:active {
+            transform: translate(-50%, -46%);
+            box-shadow: 
+                0 0 30px var(--shadow-color),
+                0 4px 0 #8b0000,
+                0 4px 10px rgba(0, 0, 0, 0.8);
+        }
+
         .ripple {
             position: absolute;
             border-radius: 50%;
-            background-color: rgba(255, 255, 255, 0.4);
+            background-color: rgba(255, 255, 255, 0.5);
             transform: scale(0);
-            animation: ripple 0.8s linear;
+            animation: ripple 0.6s linear;
             pointer-events: none;
         }
-        
+
         @keyframes ripple {
             to {
-                transform: scale(2.5);
+                transform: scale(3);
                 opacity: 0;
             }
         }
-        
-        .glitch {
-            position: relative;
-            animation: glitch-skew 1s infinite linear alternate-reverse;
-        }
-        
-        .glitch::before,
-        .glitch::after {
-            content: attr(data-text);
+
+        .click-count {
             position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            opacity: 0.8;
-        }
-        
-        .glitch::before {
-            color: #ff00c1;
-            animation: glitch-effect 1.5s infinite linear alternate-reverse;
-            clip-path: polygon(0 0, 100% 0, 100% 45%, 0 45%);
-            transform: translate(-0.1em, -0.025em);
-        }
-        
-        .glitch::after {
-            color: #3498db;
-            animation: glitch-effect 2s infinite linear alternate-reverse;
-            clip-path: polygon(0 80%, 100% 20%, 100% 100%, 0 100%);
-            transform: translate(0.1em, 0.025em);
-        }
-        
-        @keyframes glitch-effect {
-            0% {
-                transform: translate(0);
-            }
-            25% {
-                transform: translate(-0.15em, 0.025em);
-            }
-            50% {
-                transform: translate(-0.025em, -0.05em);
-            }
-            75% {
-                transform: translate(0.125em, 0.03em);
-            }
-            100% {
-                transform: translate(0);
-            }
-        }
-        
-        @keyframes glitch-skew {
-            0% {
-                transform: skew(0deg);
-            }
-            25% {
-                transform: skew(1deg);
-            }
-            50% {
-                transform: skew(-1deg);
-            }
-            75% {
-                transform: skew(1deg);
-            }
-            100% {
-                transform: skew(-1deg);
-            }
-        }
-        
-        .warning-text {
-            position: fixed;
-            top: 20px;
+            bottom: -40px;
             left: 0;
             width: 100%;
             text-align: center;
-            color: var(--primary-color);
-            font-size: 12px;
-            opacity: 0;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            font-weight: 700;
-            z-index: 100;
-            animation: blink 4s ease infinite;
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--accent-color);
         }
-        
-        @keyframes blink {
-            0%, 100% { opacity: 0; }
-            50% { opacity: 1; }
+
+        .feedback-circle {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            width: 220px;
+            height: 220px;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.1);
+            z-index: -1;
+            pointer-events: none;
         }
-        
-        .heartbeat {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(255, 0, 0, 0.05);
-            z-index: -2;
+
+        @keyframes feedback-expand {
+            0% {
+                transform: translate(-50%, -50%) scale(0);
+                opacity: 0.5;
+            }
+            100% {
+                transform: translate(-50%, -50%) scale(3);
+                opacity: 0;
+            }
+        }
+
+        .confetti {
+            position: absolute;
+            width: 10px;
+            height: 10px;
             opacity: 0;
             pointer-events: none;
         }
-        
-        .pulse-dot {
-            position: fixed;
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            background-color: var(--primary-color);
-            box-shadow: 0 0 10px var(--primary-color);
-            opacity: 0;
-            z-index: -1;
-            animation: pulse-fade 3s infinite ease-out;
+
+        .indicator {
+            position: absolute;
+            width: 30px;
+            height: 3px;
+            background-color: rgba(255, 255, 255, 0.3);
+            border-radius: 5px;
+            transform-origin: left center;
         }
 
-        @keyframes pulse-fade {
-            0% { transform: scale(0); opacity: 1; }
-            100% { transform: scale(20); opacity: 0; }
-        }
-        
-        #buttonClickCount {
-            position: fixed;
-            bottom: 10px;
-            right: 10px;
-            font-size: 12px;
-            color: rgba(255,255,255,0.3);
-            z-index: 1000;
-        }
-        
-        .hidden-message {
+        .indicator-container {
             position: absolute;
-            font-size: 3px;
-            opacity: 0.1;
-            bottom: 5px;
-            right: 5px;
-            -webkit-user-select: none;
-            user-select: none;
+            top: 50%;
+            left: 50%;
+            width: 300px;
+            height: 300px;
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+        }
+
+        footer {
+            position: fixed;
+            bottom: 1rem;
+            font-size: 0.8rem;
+            opacity: 0.5;
+        }
+
+        footer a {
+            color: var(--accent-color);
+            text-decoration: none;
+        }
+
+        .visual-effect {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: black;
+            opacity: 0;
+            pointer-events: none;
+            z-index: 100;
+            transition: opacity 0.1s ease;
+        }
+
+        @media (max-width: 768px) {
+            .button-wrapper {
+                width: 180px;
+                height: 180px;
+            }
+            
+            #theButton {
+                width: 140px;
+                height: 140px;
+                font-size: 1.1rem;
+            }
+            
+            .feedback-circle {
+                width: 200px;
+                height: 200px;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="overlay"></div>
-    <div class="warning-text">CONNECTION ESTABLISHED</div>
-    <div class="heartbeat" id="heartbeat"></div>
-    
     <div class="container">
-        <h1>THE RANDOM <span class="highlight">BUTTON</span></h1>
-        <p class="subtitle">Do you dare to click?</p>
+        <h1>THE BUTTON</h1>
         
-        <div class="button-container">
-            <button id="randomButton" data-text="PUSH ME">PUSH ME</button>
-        </div>
-        
-        <div id="result" class="result-container">
-            <p id="resultText">Your fate awaits...</p>
-            <span class="hidden-message">they are watching</span>
+        <div class="button-wrapper">
+            <div class="button-outer"></div>
+            <button id="theButton">PUSH</button>
+            <div class="feedback-circle" id="feedbackCircle"></div>
+            <div class="click-count" id="clickCount">0</div>
         </div>
     </div>
     
-    <div id="particles"></div>
-    <div id="buttonClickCount">Clicks: 0</div>
+    <div class="indicator-container" id="indicatorContainer"></div>
+    <div class="visual-effect" id="visualEffect"></div>
     
     <footer>
-        <p>Created with ❤️‍🔥 | <a href="https://github.com/TMHSDigital/Random-Button.com" target="_blank" rel="noopener">GitHub</a></p>
+        <p>Created by <a href="https://github.com/TMHSDigital/Random-Button.com" target="_blank" rel="noopener">TMHSDigital</a></p>
     </footer>
     
-    <!-- Audio preloading -->
-    <audio id="buttonClickSound" preload="auto">
-        <source src="https://cdn.pixabay.com/download/audio/2021/08/09/audio_0625d2cfb0.mp3?filename=click-21156.mp3" type="audio/mpeg">
+    <!-- Audio effects -->
+    <audio id="clickSound" preload="auto">
+        <source src="https://cdn.pixabay.com/download/audio/2022/03/10/audio_c8c8a73467.mp3?filename=button-press-39565.mp3" type="audio/mpeg">
     </audio>
-    <audio id="glitchSound" preload="auto">
-        <source src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_00fc72b2ce.mp3?filename=glitch-41252.mp3" type="audio/mpeg">
+    
+    <audio id="powerSound" preload="auto">
+        <source src="https://cdn.pixabay.com/download/audio/2022/01/18/audio_99362cae89.mp3?filename=power-up-39172.mp3" type="audio/mpeg">
     </audio>
-    <audio id="whooshSound" preload="auto">
-        <source src="https://cdn.pixabay.com/download/audio/2022/01/18/audio_3ff62246df.mp3?filename=whoosh-6316.mp3" type="audio/mpeg">
-    </audio>
-    <audio id="heartbeatSound" preload="auto" loop>
-        <source src="https://cdn.pixabay.com/download/audio/2022/01/13/audio_f16f812f39.mp3?filename=heartbeat-60bpm-94233.mp3" type="audio/mpeg">
+    
+    <audio id="popSound" preload="auto">
+        <source src="https://cdn.pixabay.com/download/audio/2022/03/25/audio_1c2c3f8ac5.mp3?filename=pop-39222.mp3" type="audio/mpeg">
     </audio>
     
     <script>
-        // Enhanced experience with dramatic effects
         document.addEventListener('DOMContentLoaded', () => {
             // Elements
-            const randomButton = document.getElementById('randomButton');
-            const resultText = document.getElementById('resultText');
-            const resultContainer = document.getElementById('result');
-            const body = document.body;
-            const container = document.querySelector('.container');
-            const particles = document.getElementById('particles');
-            const buttonClickCount = document.getElementById('buttonClickCount');
-            const heartbeat = document.getElementById('heartbeat');
-            const warningText = document.querySelector('.warning-text');
+            const theButton = document.getElementById('theButton');
+            const clickCount = document.getElementById('clickCount');
+            const feedbackCircle = document.getElementById('feedbackCircle');
+            const indicatorContainer = document.getElementById('indicatorContainer');
+            const visualEffect = document.getElementById('visualEffect');
             
-            // Audio elements
-            const buttonClickSound = document.getElementById('buttonClickSound');
-            const glitchSound = document.getElementById('glitchSound');
-            const whooshSound = document.getElementById('whooshSound');
-            const heartbeatSound = document.getElementById('heartbeatSound');
+            // Audio
+            const clickSound = document.getElementById('clickSound');
+            const powerSound = document.getElementById('powerSound');
+            const popSound = document.getElementById('popSound');
             
-            // Fix audio for Safari
-            buttonClickSound.load();
-            glitchSound.load();
-            whooshSound.load();
-            heartbeatSound.load();
-
-            // State tracking
-            let clickCount = 0;
-            let secretActivated = false;
-            let warningTexts = [
-                "CONNECTION ESTABLISHED",
-                "SYSTEM INITIATED",
-                "ANALYZING USER",
-                "MONITORING ACTIVE",
-                "THEY ARE WATCHING",
-                "DO NOT TRUST THE BUTTON",
-                "ERROR IN REALITY MATRIX",
-                "BREACH DETECTED"
-            ];
+            // Preload audio
+            clickSound.load();
+            powerSound.load();
+            popSound.load();
             
-            // Create pulse dots
-            function createPulseDots() {
-                for (let i = 0; i < 3; i++) {
-                    setTimeout(() => {
-                        const dot = document.createElement('div');
-                        dot.classList.add('pulse-dot');
-                        
-                        // Random position
-                        dot.style.left = `${Math.random() * 100}%`;
-                        dot.style.top = `${Math.random() * 100}%`;
-                        
-                        document.body.appendChild(dot);
-                        
-                        // Remove after animation
-                        setTimeout(() => {
-                            document.body.removeChild(dot);
-                        }, 3000);
-                    }, i * 1000);
+            // State
+            let count = 0;
+            let confettiColors = ['#ff0000', '#ff9500', '#ffea00', '#00ff00', '#0095ff', '#9500ff'];
+            let consecutiveClickTimer;
+            let rapidClickCount = 0;
+            let indicatorCount = 0;
+            
+            // Create indicators around the button
+            function createIndicators() {
+                indicatorContainer.innerHTML = '';
+                
+                for (let i = 0; i < 12; i++) {
+                    const indicator = document.createElement('div');
+                    indicator.classList.add('indicator');
+                    
+                    // Position in a circle
+                    const angle = (i / 12) * 360;
+                    const radians = angle * (Math.PI / 180);
+                    const x = Math.cos(radians) * 150 + 150;
+                    const y = Math.sin(radians) * 150 + 150;
+                    
+                    indicator.style.left = `${x}px`;
+                    indicator.style.top = `${y}px`;
+                    indicator.style.transform = `rotate(${angle}deg)`;
+                    
+                    indicatorContainer.appendChild(indicator);
                 }
             }
             
-            // Create particles
-            function createParticles() {
-                particles.innerHTML = '';
-                const particleCount = Math.min(20 + clickCount, 50);
+            // Update indicators based on click count
+            function updateIndicators() {
+                const indicators = document.querySelectorAll('.indicator');
+                const activeCount = Math.min(Math.floor(count / 10), indicators.length);
                 
-                for(let i = 0; i < particleCount; i++) {
-                    const particle = document.createElement('div');
-                    particle.classList.add('particle');
-                    
-                    // Random position, size and animation duration
-                    const size = Math.random() * 10 + 5;
-                    const posX = Math.random() * window.innerWidth;
-                    const posY = Math.random() * window.innerHeight;
-                    const animDuration = Math.random() * 3 + 2;
-                    
-                    particle.style.width = `${size}px`;
-                    particle.style.height = `${size}px`;
-                    particle.style.left = `${posX}px`;
-                    particle.style.top = `${posY}px`;
-                    particle.style.animationDuration = `${animDuration}s`;
-                    
-                    particles.appendChild(particle);
-                }
-            }
-            
-            // Flash effect
-            function flashEffect() {
-                const flash = document.createElement('div');
-                flash.classList.add('flash');
-                document.body.appendChild(flash);
-                
-                // Trigger flash
-                setTimeout(() => {
-                    flash.style.opacity = '0.5';
-                }, 10);
-                
-                setTimeout(() => {
-                    flash.style.opacity = '0';
-                    setTimeout(() => {
-                        document.body.removeChild(flash);
-                    }, 100);
-                }, 150);
+                indicators.forEach((indicator, index) => {
+                    if (index < activeCount) {
+                        indicator.style.backgroundColor = `rgba(255, ${Math.min(58 + index * 16, 255)}, 58, 0.8)`;
+                    } else {
+                        indicator.style.backgroundColor = 'rgba(255, 255, 255, 0.3)';
+                    }
+                });
             }
             
             // Ripple effect
@@ -371,8 +347,19 @@
                 circle.style.width = circle.style.height = `${diameter}px`;
                 
                 const rect = button.getBoundingClientRect();
-                const offsetX = event.clientX - rect.left - diameter / 2;
-                const offsetY = event.clientY - rect.top - diameter / 2;
+                
+                // For touch devices
+                let clientX, clientY;
+                if (event.type === 'touchstart') {
+                    clientX = event.touches[0].clientX;
+                    clientY = event.touches[0].clientY;
+                } else {
+                    clientX = event.clientX;
+                    clientY = event.clientY;
+                }
+                
+                const offsetX = clientX - rect.left - diameter / 2;
+                const offsetY = clientY - rect.top - diameter / 2;
                 
                 circle.style.left = `${offsetX}px`;
                 circle.style.top = `${offsetY}px`;
@@ -381,188 +368,126 @@
                 
                 setTimeout(() => {
                     circle.remove();
-                }, 800);
+                }, 600);
             }
             
-            // Glitch effect
-            function applyGlitchEffect() {
-                randomButton.classList.add('glitch');
-                randomButton.setAttribute('data-text', randomButton.textContent);
-                
-                setTimeout(() => {
-                    randomButton.classList.remove('glitch');
-                }, 2000);
-            }
-            
-            // Toggle heartbeat effect
-            function toggleHeartbeat(enabled) {
-                if (enabled) {
-                    const interval = setInterval(() => {
-                        heartbeat.style.opacity = '1';
-                        setTimeout(() => {
-                            heartbeat.style.opacity = '0';
-                        }, 300);
-                    }, 2000);
+            // Confetti effect for milestone clicks
+            function createConfetti() {
+                for (let i = 0; i < 50; i++) {
+                    const confetti = document.createElement('div');
+                    confetti.classList.add('confetti');
                     
-                    return interval;
+                    const size = Math.random() * 10 + 5;
+                    const color = confettiColors[Math.floor(Math.random() * confettiColors.length)];
+                    
+                    confetti.style.width = `${size}px`;
+                    confetti.style.height = `${size}px`;
+                    confetti.style.backgroundColor = color;
+                    confetti.style.left = `${Math.random() * 100}%`;
+                    confetti.style.top = '0';
+                    
+                    document.body.appendChild(confetti);
+                    
+                    // Animate
+                    const angle = Math.random() * 360;
+                    const distance = 500 + Math.random() * 300;
+                    const duration = 1 + Math.random() * 2;
+                    
+                    confetti.animate([
+                        { transform: 'translate(0, 0)', opacity: 1 },
+                        { transform: `translate(${Math.cos(angle) * distance}px, ${Math.sin(angle) * distance}px)`, opacity: 0 }
+                    ], {
+                        duration: duration * 1000,
+                        easing: 'cubic-bezier(0,0,0.2,1)'
+                    });
+                    
+                    setTimeout(() => {
+                        confetti.remove();
+                    }, duration * 1000);
                 }
             }
             
-            // Secret unlocked effect
-            function unlockSecret() {
-                if (secretActivated) return;
-                
-                secretActivated = true;
-                glitchSound.play();
-                
-                // Dramatic visual changes
-                document.body.style.transition = 'all 2s ease';
-                document.body.style.background = 'linear-gradient(-45deg, #000000, #1a0000, #340000, #0a0a0a)';
-                
-                resultContainer.style.borderColor = '#ff0000';
-                resultContainer.style.boxShadow = '0 0 30px rgba(255, 0, 0, 0.3)';
-                
-                // Start heartbeat
-                const heartbeatInterval = toggleHeartbeat(true);
-                heartbeatSound.volume = 0.15;
-                heartbeatSound.play();
-                
-                // Easter egg message
-                setTimeout(() => {
-                    resultText.innerHTML = `<span class="category" style="color: #ff0000; border-color: #ff0000;">SYSTEM ALERT</span><br>You have clicked too many times. They know you're here now. Be careful with what you wish for.`;
-                    
-                    // Continuous warning message changes
-                    setInterval(() => {
-                        warningText.textContent = warningTexts[Math.floor(Math.random() * warningTexts.length)];
-                        warningText.style.opacity = '1';
-                    }, 4000);
-                }, 500);
-                
-                return heartbeatInterval;
+            // Expansion circle feedback
+            function showFeedbackCircle() {
+                feedbackCircle.style.animation = 'none';
+                void feedbackCircle.offsetWidth; // Trigger reflow
+                feedbackCircle.style.animation = 'feedback-expand 0.8s ease-out forwards';
             }
             
-            if (randomButton && resultText && resultContainer) {
-                // Dramatic phrases with categories
-                const dramaticPhrases = [
-                    { text: "The stars have aligned. Today, you must confront your greatest fear.", category: "DESTINY" },
-                    { text: "A moment of truth awaits you. Look behind the curtain to find what you seek.", category: "REVELATION" },
-                    { text: "The universe whispers: 'Everything you've been working toward is about to change.'", category: "COSMIC MESSAGE" },
-                    { text: "An opportunity disguised as an ordinary moment will present itself today. Be vigilant.", category: "OPPORTUNITY" },
-                    { text: "The path less traveled calls to you. Will you answer?", category: "CHALLENGE" },
-                    { text: "A forgotten memory holds the key to your current dilemma.", category: "INSIGHT" },
-                    { text: "The answer you seek has been in front of you all along.", category: "TRUTH" },
-                    { text: "Tonight, when darkness falls, pay attention to your dreams. They contain messages.", category: "PROPHECY" },
-                    { text: "Someone from your past is thinking about you right now.", category: "CONNECTION" },
-                    { text: "Your next decision will set in motion a chain of events that cannot be undone.", category: "PIVOTAL MOMENT" },
-                    { text: "An unexpected ally will emerge from the shadows to guide you.", category: "ALLIANCE" },
-                    { text: "The mask you wear is becoming your true face. Remember who you really are.", category: "IDENTITY" },
-                    { text: "A test of character approaches. How you respond will reveal your true nature.", category: "TRIAL" },
-                    { text: "The walls have ears, and your secrets may not be safe for long.", category: "WARNING" },
-                    { text: "A gift will arrive in an unusual form. Do not dismiss it.", category: "BLESSING" },
-                    { text: "Look at the clock at exactly 11:11. Make a wish, but be careful what you wish for.", category: "SYNCHRONICITY" },
-                    { text: "The next song you hear will contain a message meant specifically for you.", category: "SIGN" },
-                    { text: "Someone is keeping a secret from you. The truth will be revealed soon.", category: "DECEPTION" },
-                    { text: "An unexpected letter or message will arrive within three days.", category: "PREMONITION" },
-                    { text: "The dream you had last night was not just a dream. It was a glimpse into another reality.", category: "PARALLEL WORLD" }
-                ];
-                
-                // Initialize
-                createParticles();
-                createPulseDots();
-                
-                // Button hover sound effect
-                randomButton.addEventListener('mouseenter', () => {
-                    if (whooshSound.paused) {
-                        whooshSound.volume = 0.2;
-                        whooshSound.currentTime = 0;
-                        whooshSound.play();
-                    }
-                });
-                
-                // Add click effect to button
-                randomButton.addEventListener('mousedown', createRipple);
-                
-                // Button click event
-                randomButton.addEventListener('click', () => {
-                    // Track clicks
-                    clickCount++;
-                    buttonClickCount.textContent = `Clicks: ${clickCount}`;
-                    
-                    // Play click sound
-                    buttonClickSound.currentTime = 0;
-                    buttonClickSound.volume = 0.3;
-                    buttonClickSound.play();
-                    
-                    // Button press effect
-                    randomButton.style.transform = 'scale(0.95)';
-                    setTimeout(() => {
-                        randomButton.style.transform = '';
-                    }, 150);
-                    
-                    // Check for secret threshold
-                    if (clickCount >= 13 && !secretActivated) {
-                        unlockSecret();
-                        return;
-                    }
-                    
-                    // Background color shift (more dramatic based on clicks)
-                    const hue = Math.floor(Math.random() * 360);
-                    const intensity = Math.min(10 + clickCount, 30);
-                    body.style.background = `linear-gradient(-45deg, 
-                        hsl(${hue}, 100%, 5%), 
-                        hsl(${hue}, 100%, ${intensity}%), 
-                        hsl(${hue}, 80%, ${Math.min(intensity + 5, 20)}%), 
-                        hsl(${hue}, 70%, 8%))`;
-                    body.style.backgroundSize = '400% 400%';
-                    
-                    // Visual effects
-                    flashEffect();
-                    container.classList.add('shake-animation');
-                    
-                    // Apply glitch effect occasionally
-                    if (clickCount > 5 && Math.random() > 0.7) {
-                        applyGlitchEffect();
-                    }
-                    
-                    setTimeout(() => {
-                        container.classList.remove('shake-animation');
-                    }, 500);
-                    
-                    // Result animation
-                    resultContainer.classList.remove('result-animation');
-                    void resultContainer.offsetWidth; // Trigger reflow
-                    resultContainer.classList.add('result-animation');
-                    
-                    // Get random dramatic phrase
-                    const randomIndex = Math.floor(Math.random() * dramaticPhrases.length);
-                    const selectedPhrase = dramaticPhrases[randomIndex];
-                    
-                    // Set the text with dramatic formatting
-                    setTimeout(() => {
-                        resultText.innerHTML = `<span class="category">${selectedPhrase.category}</span><br>${selectedPhrase.text}`;
-                    }, 300);
-                    
-                    // Recreate particles
-                    createParticles();
-                    
-                    // Create pulse dots
-                    if (clickCount > 3) {
-                        createPulseDots();
-                    }
-                });
-                
-                // Add spacebar shortcut
-                document.addEventListener('keydown', (event) => {
-                    if (event.code === 'Space') {
-                        event.preventDefault();
-                        randomButton.click();
-                    }
-                });
-                
-                console.log("Enhanced experience loaded!");
-            } else {
-                console.error("Required elements not found!");
+            // Flash effect
+            function flashEffect() {
+                visualEffect.style.opacity = '0.3';
+                setTimeout(() => {
+                    visualEffect.style.opacity = '0';
+                }, 100);
             }
+            
+            // Initialize
+            createIndicators();
+            
+            // Button events
+            function handleButtonClick() {
+                // Increment count
+                count++;
+                clickCount.textContent = count;
+                
+                // Play sound
+                clickSound.currentTime = 0;
+                clickSound.volume = 0.4;
+                clickSound.play();
+                
+                // Visual effects
+                showFeedbackCircle();
+                updateIndicators();
+                
+                // Handle rapid clicks
+                rapidClickCount++;
+                clearTimeout(consecutiveClickTimer);
+                
+                if (rapidClickCount >= 5) {
+                    // Power up sound for rapid clicks
+                    powerSound.currentTime = 0;
+                    powerSound.volume = 0.5;
+                    powerSound.play();
+                    
+                    // Special visual effect
+                    flashEffect();
+                    
+                    // Reset rapid click counter
+                    rapidClickCount = 0;
+                }
+                
+                consecutiveClickTimer = setTimeout(() => {
+                    rapidClickCount = 0;
+                }, 1000);
+                
+                // Milestone celebrations
+                if (count % 50 === 0) {
+                    createConfetti();
+                    
+                    // Pop sound for milestones
+                    popSound.currentTime = 0;
+                    popSound.volume = 0.6;
+                    popSound.play();
+                }
+            }
+            
+            // Add event listeners (mouse & touch)
+            theButton.addEventListener('mousedown', createRipple);
+            theButton.addEventListener('touchstart', createRipple, { passive: true });
+            theButton.addEventListener('click', handleButtonClick);
+            
+            // Spacebar support
+            document.addEventListener('keydown', (event) => {
+                if (event.code === 'Space') {
+                    event.preventDefault();
+                    theButton.click();
+                    theButton.classList.add('active');
+                    setTimeout(() => {
+                        theButton.classList.remove('active');
+                    }, 100);
+                }
+            });
         });
     </script>
 </body>
