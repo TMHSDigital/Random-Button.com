@@ -11,10 +11,11 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;600;800&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-color: #121212;
+            --bg-color: #0a0a0a;
             --accent-color: #ff3a3a;
             --text-color: #ffffff;
             --shadow-color: rgba(255, 58, 58, 0.8);
+            --glow-color: rgba(255, 58, 58, 0.4);
         }
 
         * {
@@ -33,6 +34,21 @@
             justify-content: center;
             align-items: center;
             overflow: hidden;
+            position: relative;
+        }
+
+        /* Subtle background pattern */
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 20% 30%, rgba(255, 58, 58, 0.03) 0%, transparent 50%),
+                radial-gradient(circle at 80% 70%, rgba(255, 58, 58, 0.03) 0%, transparent 50%);
+            z-index: -1;
         }
 
         .container {
@@ -43,18 +59,23 @@
         }
 
         h1 {
-            font-size: 2rem;
-            margin-bottom: 3rem;
+            font-size: 2.5rem;
+            margin-bottom: 4rem;
             font-weight: 800;
-            letter-spacing: 2px;
-            opacity: 0.9;
+            letter-spacing: 3px;
+            opacity: 0.95;
+            text-shadow: 0 0 15px rgba(255, 58, 58, 0.3);
+            background: linear-gradient(135deg, #fff 10%, #ddd 90%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
 
         .button-wrapper {
             position: relative;
             margin: 2rem auto;
-            width: 200px;
-            height: 200px;
+            width: 220px;
+            height: 220px;
         }
 
         .button-outer {
@@ -64,22 +85,23 @@
             width: 100%;
             height: 100%;
             border-radius: 50%;
-            background: rgba(255, 58, 58, 0.2);
-            animation: pulse 2s infinite;
+            background: linear-gradient(135deg, rgba(255, 58, 58, 0.2), rgba(255, 0, 0, 0.1));
+            box-shadow: 0 0 30px rgba(255, 58, 58, 0.2);
+            animation: pulse 2.5s infinite ease-in-out;
         }
 
         @keyframes pulse {
             0% {
                 transform: scale(1);
-                opacity: 1;
+                opacity: 0.8;
             }
             50% {
-                transform: scale(1.1);
-                opacity: 0.5;
+                transform: scale(1.08);
+                opacity: 0.4;
             }
             100% {
                 transform: scale(1);
-                opacity: 1;
+                opacity: 0.8;
             }
         }
 
@@ -88,25 +110,29 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            width: 160px;
-            height: 160px;
+            width: 180px;
+            height: 180px;
             border-radius: 50%;
-            background: radial-gradient(circle at 30% 30%, #ff5252, #b71c1c);
+            background: radial-gradient(circle at 30% 25%, #ff5252, #b71c1c 80%);
             border: none;
-            box-shadow: 
-                0 0 25px var(--shadow-color),
-                0 8px 0 #8b0000,
-                0 8px 15px rgba(0, 0, 0, 0.8);
             cursor: pointer;
-            transition: all 0.1s ease;
+            transition: all 0.08s cubic-bezier(0.25, 0.46, 0.45, 0.94);
             color: white;
-            font-size: 1.3rem;
+            font-size: 1.4rem;
             font-weight: 600;
             letter-spacing: 1px;
             overflow: hidden;
             user-select: none;
             -webkit-user-select: none;
             -webkit-tap-highlight-color: transparent;
+            /* Enhanced 3D effect */
+            box-shadow: 
+                inset 0 -8px 0 #8b0000,
+                inset 2px 2px 6px rgba(255, 255, 255, 0.3),
+                inset -2px -2px 6px rgba(0, 0, 0, 0.4),
+                0 0 25px var(--shadow-color),
+                0 10px 0 #8b0000,
+                0 10px 20px rgba(0, 0, 0, 0.8);
         }
 
         #theButton:focus {
@@ -116,36 +142,52 @@
         #theButton:active {
             transform: translate(-50%, -46%);
             box-shadow: 
-                0 0 30px var(--shadow-color),
-                0 4px 0 #8b0000,
-                0 4px 10px rgba(0, 0, 0, 0.8);
+                inset 0 -4px 0 #8b0000,
+                inset 2px 2px 6px rgba(255, 255, 255, 0.3),
+                inset -2px -2px 6px rgba(0, 0, 0, 0.4),
+                0 0 35px var(--shadow-color),
+                0 5px 0 #8b0000,
+                0 5px 10px rgba(0, 0, 0, 0.8);
         }
 
         .ripple {
             position: absolute;
             border-radius: 50%;
-            background-color: rgba(255, 255, 255, 0.5);
+            background: radial-gradient(circle at center, rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.4));
             transform: scale(0);
-            animation: ripple 0.6s linear;
+            animation: ripple 0.6s cubic-bezier(0, 0, 0.2, 1);
             pointer-events: none;
         }
 
         @keyframes ripple {
             to {
-                transform: scale(3);
+                transform: scale(3.5);
                 opacity: 0;
             }
         }
 
         .click-count {
             position: absolute;
-            bottom: -40px;
+            bottom: -50px;
             left: 0;
             width: 100%;
             text-align: center;
-            font-size: 1.2rem;
+            font-size: 1.4rem;
             font-weight: 600;
             color: var(--accent-color);
+            text-shadow: 0 0 10px var(--glow-color);
+            transition: all 0.2s ease;
+        }
+
+        /* Make count pulse when updated */
+        .click-count.updated {
+            animation: countPulse 0.3s ease-out;
+        }
+
+        @keyframes countPulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
         }
 
         .feedback-circle {
@@ -153,10 +195,10 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%) scale(0);
-            width: 220px;
-            height: 220px;
+            width: 240px;
+            height: 240px;
             border-radius: 50%;
-            background-color: rgba(255, 255, 255, 0.1);
+            background: radial-gradient(circle at center, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.1));
             z-index: -1;
             pointer-events: none;
         }
@@ -164,18 +206,16 @@
         @keyframes feedback-expand {
             0% {
                 transform: translate(-50%, -50%) scale(0);
-                opacity: 0.5;
+                opacity: 0.6;
             }
             100% {
-                transform: translate(-50%, -50%) scale(3);
+                transform: translate(-50%, -50%) scale(3.5);
                 opacity: 0;
             }
         }
 
         .confetti {
             position: absolute;
-            width: 10px;
-            height: 10px;
             opacity: 0;
             pointer-events: none;
         }
@@ -184,19 +224,47 @@
             position: absolute;
             width: 30px;
             height: 3px;
-            background-color: rgba(255, 255, 255, 0.3);
+            background-color: rgba(255, 255, 255, 0.15);
             border-radius: 5px;
             transform-origin: left center;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+            transition: background-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .indicator.active {
+            box-shadow: 0 0 8px var(--glow-color);
         }
 
         .indicator-container {
             position: absolute;
             top: 50%;
             left: 50%;
-            width: 300px;
-            height: 300px;
+            width: 350px;
+            height: 350px;
             transform: translate(-50%, -50%);
             pointer-events: none;
+        }
+
+        .progress-ring {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 200px;
+            height: 200px;
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+        }
+
+        .progress-ring circle {
+            fill: transparent;
+            stroke: var(--accent-color);
+            stroke-width: 4px;
+            stroke-linecap: round;
+            stroke-dasharray: 502; /* Circumference of circle (2πr) */
+            stroke-dashoffset: 502; /* Start with full offset (no progress) */
+            opacity: 0.6;
+            filter: drop-shadow(0 0 5px var(--glow-color));
+            transition: stroke-dashoffset 0.3s ease;
         }
 
         footer {
@@ -204,6 +272,11 @@
             bottom: 1rem;
             font-size: 0.8rem;
             opacity: 0.5;
+            transition: opacity 0.3s ease;
+        }
+
+        footer:hover {
+            opacity: 0.8;
         }
 
         footer a {
@@ -217,28 +290,96 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background-color: black;
+            background: radial-gradient(circle at center, rgba(255, 58, 58, 0.15), transparent 70%);
             opacity: 0;
             pointer-events: none;
             z-index: 100;
             transition: opacity 0.1s ease;
         }
 
+        /* Stars for milestone celebrations */
+        .star {
+            position: absolute;
+            width: 0;
+            height: 0;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        @keyframes star-anim {
+            0% {
+                opacity: 1;
+                transform: scale(0) rotate(0deg);
+            }
+            50% {
+                opacity: 1;
+                transform: scale(1) rotate(180deg);
+            }
+            100% {
+                opacity: 0;
+                transform: scale(0.5) rotate(360deg);
+            }
+        }
+
+        /* Counter milestone text */
+        .milestone-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            font-size: 3rem;
+            font-weight: 800;
+            color: var(--accent-color);
+            text-shadow: 0 0 15px var(--glow-color);
+            z-index: 20;
+            pointer-events: none;
+            opacity: 0;
+        }
+
+        @keyframes milestone-popup {
+            0% {
+                transform: translate(-50%, -50%) scale(0);
+                opacity: 0;
+            }
+            50% {
+                transform: translate(-50%, -50%) scale(1.2);
+                opacity: 1;
+            }
+            80% {
+                transform: translate(-50%, -50%) scale(0.9);
+                opacity: 0.9;
+            }
+            100% {
+                transform: translate(-50%, -50%) scale(1);
+                opacity: 0;
+            }
+        }
+
         @media (max-width: 768px) {
+            h1 {
+                font-size: 2rem;
+                margin-bottom: 3rem;
+            }
+
             .button-wrapper {
-                width: 180px;
-                height: 180px;
+                width: 200px;
+                height: 200px;
             }
             
             #theButton {
-                width: 140px;
-                height: 140px;
-                font-size: 1.1rem;
+                width: 160px;
+                height: 160px;
+                font-size: 1.2rem;
             }
             
             .feedback-circle {
-                width: 200px;
-                height: 200px;
+                width: 220px;
+                height: 220px;
+            }
+
+            .indicator-container {
+                width: 300px;
+                height: 300px;
             }
         }
     </style>
@@ -256,6 +397,15 @@
     </div>
     
     <div class="indicator-container" id="indicatorContainer"></div>
+    
+    <!-- SVG for circular progress indicator -->
+    <div class="progress-ring">
+        <svg width="200" height="200">
+            <circle r="80" cx="100" cy="100" id="progressCircle"></circle>
+        </svg>
+    </div>
+    
+    <div class="milestone-text" id="milestoneText"></div>
     <div class="visual-effect" id="visualEffect"></div>
     
     <footer>
@@ -272,7 +422,7 @@
     </audio>
     
     <audio id="popSound" preload="auto">
-        <source src="https://cdn.pixabay.com/download/audio/2022/03/25/audio_1c2c3f8ac5.mp3?filename=pop-39222.mp3" type="audio/mpeg">
+        <source src="https://cdn.pixabay.com/download/audio/2021/08/04/audio_12b0c171a6.mp3?filename=success-1-6297.mp3" type="audio/mpeg">
     </audio>
     
     <script>
@@ -283,6 +433,8 @@
             const feedbackCircle = document.getElementById('feedbackCircle');
             const indicatorContainer = document.getElementById('indicatorContainer');
             const visualEffect = document.getElementById('visualEffect');
+            const progressCircle = document.getElementById('progressCircle');
+            const milestoneText = document.getElementById('milestoneText');
             
             // Audio
             const clickSound = document.getElementById('clickSound');
@@ -290,30 +442,42 @@
             const popSound = document.getElementById('popSound');
             
             // Preload audio
-            clickSound.load();
-            powerSound.load();
-            popSound.load();
+            [clickSound, powerSound, popSound].forEach(sound => {
+                sound.load();
+                // Mute initially to allow autoplay on iOS
+                sound.muted = true;
+                sound.play().then(() => {
+                    sound.pause();
+                    sound.currentTime = 0;
+                    sound.muted = false;
+                }).catch(e => {
+                    // Autoplay not allowed, that's okay
+                    sound.muted = false;
+                });
+            });
             
             // State
             let count = 0;
-            let confettiColors = ['#ff0000', '#ff9500', '#ffea00', '#00ff00', '#0095ff', '#9500ff'];
+            let confettiColors = ['#ff3a3a', '#ff9500', '#ffea00', '#00ff00', '#0095ff', '#9500ff'];
             let consecutiveClickTimer;
             let rapidClickCount = 0;
-            let indicatorCount = 0;
+            const MILESTONE = 50; // Clicks for milestone celebration
+            const MAX_INDICATORS = 16;
+            const CIRCLE_CIRCUMFERENCE = 502; // 2πr where r=80
             
             // Create indicators around the button
             function createIndicators() {
                 indicatorContainer.innerHTML = '';
                 
-                for (let i = 0; i < 12; i++) {
+                for (let i = 0; i < MAX_INDICATORS; i++) {
                     const indicator = document.createElement('div');
                     indicator.classList.add('indicator');
                     
                     // Position in a circle
-                    const angle = (i / 12) * 360;
+                    const angle = (i / MAX_INDICATORS) * 360;
                     const radians = angle * (Math.PI / 180);
-                    const x = Math.cos(radians) * 150 + 150;
-                    const y = Math.sin(radians) * 150 + 150;
+                    const x = Math.cos(radians) * 175 + 175;
+                    const y = Math.sin(radians) * 175 + 175;
                     
                     indicator.style.left = `${x}px`;
                     indicator.style.top = `${y}px`;
@@ -326,15 +490,24 @@
             // Update indicators based on click count
             function updateIndicators() {
                 const indicators = document.querySelectorAll('.indicator');
-                const activeCount = Math.min(Math.floor(count / 10), indicators.length);
+                const modCount = count % (MILESTONE * 2); // Reset visuals after 100 clicks
+                const progress = modCount / (MILESTONE * 2);
+                const activeCount = Math.floor(progress * indicators.length);
                 
                 indicators.forEach((indicator, index) => {
                     if (index < activeCount) {
-                        indicator.style.backgroundColor = `rgba(255, ${Math.min(58 + index * 16, 255)}, 58, 0.8)`;
+                        const intensity = Math.min(100, 30 + (index / indicators.length) * 70);
+                        indicator.style.backgroundColor = `rgba(255, ${intensity}, ${intensity}, 0.8)`;
+                        indicator.classList.add('active');
                     } else {
-                        indicator.style.backgroundColor = 'rgba(255, 255, 255, 0.3)';
+                        indicator.style.backgroundColor = 'rgba(255, 255, 255, 0.15)';
+                        indicator.classList.remove('active');
                     }
                 });
+                
+                // Update circular progress
+                const dashOffset = CIRCLE_CIRCUMFERENCE - (progress * CIRCLE_CIRCUMFERENCE);
+                progressCircle.style.strokeDashoffset = dashOffset;
             }
             
             // Ripple effect
@@ -371,55 +544,120 @@
                 }, 600);
             }
             
-            // Confetti effect for milestone clicks
-            function createConfetti() {
-                for (let i = 0; i < 50; i++) {
-                    const confetti = document.createElement('div');
-                    confetti.classList.add('confetti');
-                    
-                    const size = Math.random() * 10 + 5;
-                    const color = confettiColors[Math.floor(Math.random() * confettiColors.length)];
-                    
-                    confetti.style.width = `${size}px`;
-                    confetti.style.height = `${size}px`;
-                    confetti.style.backgroundColor = color;
-                    confetti.style.left = `${Math.random() * 100}%`;
-                    confetti.style.top = '0';
-                    
-                    document.body.appendChild(confetti);
-                    
-                    // Animate
-                    const angle = Math.random() * 360;
-                    const distance = 500 + Math.random() * 300;
-                    const duration = 1 + Math.random() * 2;
-                    
-                    confetti.animate([
-                        { transform: 'translate(0, 0)', opacity: 1 },
-                        { transform: `translate(${Math.cos(angle) * distance}px, ${Math.sin(angle) * distance}px)`, opacity: 0 }
-                    ], {
-                        duration: duration * 1000,
-                        easing: 'cubic-bezier(0,0,0.2,1)'
-                    });
-                    
-                    setTimeout(() => {
-                        confetti.remove();
-                    }, duration * 1000);
+            // Confetti and star effects for milestone clicks
+            function createCelebrationEffects() {
+                // Confetti
+                for (let i = 0; i < 60; i++) {
+                    createConfetti();
                 }
+                
+                // Stars
+                for (let i = 0; i < 12; i++) {
+                    createStar(i);
+                }
+                
+                // Show milestone text
+                milestoneText.textContent = count;
+                milestoneText.style.animation = 'none';
+                void milestoneText.offsetWidth; // Trigger reflow
+                milestoneText.style.animation = 'milestone-popup 2s ease-out forwards';
+            }
+            
+            function createConfetti() {
+                const confetti = document.createElement('div');
+                confetti.classList.add('confetti');
+                
+                const size = Math.random() * 10 + 5;
+                const color = confettiColors[Math.floor(Math.random() * confettiColors.length)];
+                
+                confetti.style.width = `${size}px`;
+                confetti.style.height = `${size}px`;
+                confetti.style.backgroundColor = color;
+                confetti.style.left = `${Math.random() * 100}%`;
+                confetti.style.top = `${Math.random() * 30}%`;
+                confetti.style.borderRadius = Math.random() > 0.5 ? '50%' : '0';
+                
+                document.body.appendChild(confetti);
+                
+                // Animate
+                const angle = Math.random() * 360;
+                const distance = 500 + Math.random() * 500;
+                const duration = 1 + Math.random() * 3;
+                
+                confetti.animate([
+                    { transform: 'translate(0, 0) rotate(0deg)', opacity: 1 },
+                    { transform: `translate(${Math.cos(angle) * distance}px, ${Math.sin(angle) * distance}px) rotate(${Math.random() * 720}deg)`, opacity: 0 }
+                ], {
+                    duration: duration * 1000,
+                    easing: 'cubic-bezier(0,0,0.2,1)'
+                });
+                
+                setTimeout(() => {
+                    confetti.remove();
+                }, duration * 1000);
+            }
+            
+            function createStar(index) {
+                const star = document.createElement('div');
+                star.classList.add('star');
+                
+                // Create star shape using before/after pseudos
+                star.innerHTML = `
+                    <svg width="50" height="50" viewBox="0 0 51 48">
+                        <path fill="${confettiColors[index % confettiColors.length]}" 
+                              d="M25.5 0L31.7 18.6H51L35.2 30.2L41.5 48L25.5 36.8L9.5 48L15.8 30.2L0 18.6H19.3L25.5 0Z"/>
+                    </svg>
+                `;
+                
+                // Position at random locations
+                const x = (Math.random() * 80) + 10; // 10-90%
+                const y = (Math.random() * 80) + 10; // 10-90%
+                star.style.left = `${x}%`;
+                star.style.top = `${y}%`;
+                
+                document.body.appendChild(star);
+                
+                // Animate
+                const delay = Math.random() * 0.5;
+                const duration = 1 + Math.random();
+                
+                star.animate([
+                    { opacity: 0, transform: 'scale(0) rotate(0deg)' },
+                    { opacity: 1, transform: 'scale(1) rotate(180deg)' },
+                    { opacity: 0, transform: 'scale(0.5) rotate(360deg)' }
+                ], {
+                    delay: delay * 1000,
+                    duration: duration * 1000,
+                    easing: 'cubic-bezier(0.22, 0.61, 0.36, 1)'
+                });
+                
+                setTimeout(() => {
+                    star.remove();
+                }, (delay + duration) * 1000);
             }
             
             // Expansion circle feedback
             function showFeedbackCircle() {
                 feedbackCircle.style.animation = 'none';
                 void feedbackCircle.offsetWidth; // Trigger reflow
-                feedbackCircle.style.animation = 'feedback-expand 0.8s ease-out forwards';
+                feedbackCircle.style.animation = 'feedback-expand 0.8s cubic-bezier(0, 0, 0.2, 1) forwards';
             }
             
             // Flash effect
-            function flashEffect() {
-                visualEffect.style.opacity = '0.3';
+            function flashEffect(intensity = 0.3) {
+                visualEffect.style.opacity = intensity.toString();
                 setTimeout(() => {
                     visualEffect.style.opacity = '0';
-                }, 100);
+                }, 150);
+            }
+            
+            // Update click count with animation
+            function updateClickCount() {
+                clickCount.textContent = count;
+                clickCount.classList.add('updated');
+                setTimeout(() => {
+                    clickCount.classList.remove('updated');
+                }, 300);
             }
             
             // Initialize
@@ -429,12 +667,18 @@
             function handleButtonClick() {
                 // Increment count
                 count++;
-                clickCount.textContent = count;
+                updateClickCount();
                 
-                // Play sound
+                // Play click sound with dynamic pitch for variety
+                const pitchVariation = 0.9 + (Math.random() * 0.2); // 0.9-1.1
+                clickSound.preservesPitch = false;
+                clickSound.playbackRate = pitchVariation;
                 clickSound.currentTime = 0;
                 clickSound.volume = 0.4;
-                clickSound.play();
+                clickSound.play().catch(e => {
+                    // Handle autoplay restrictions
+                    console.log("Audio playback was prevented:", e);
+                });
                 
                 // Visual effects
                 showFeedbackCircle();
@@ -448,10 +692,12 @@
                     // Power up sound for rapid clicks
                     powerSound.currentTime = 0;
                     powerSound.volume = 0.5;
-                    powerSound.play();
+                    powerSound.play().catch(e => {
+                        // Handle autoplay restrictions
+                    });
                     
                     // Special visual effect
-                    flashEffect();
+                    flashEffect(0.4);
                     
                     // Reset rapid click counter
                     rapidClickCount = 0;
@@ -462,30 +708,45 @@
                 }, 1000);
                 
                 // Milestone celebrations
-                if (count % 50 === 0) {
-                    createConfetti();
+                if (count % MILESTONE === 0) {
+                    createCelebrationEffects();
                     
                     // Pop sound for milestones
                     popSound.currentTime = 0;
                     popSound.volume = 0.6;
-                    popSound.play();
+                    popSound.play().catch(e => {
+                        // Handle autoplay restrictions
+                    });
+                    
+                    // Stronger flash effect for milestones
+                    flashEffect(0.5);
+                }
+            }
+            
+            // Add haptic feedback for mobile (if available)
+            function triggerHapticFeedback() {
+                if (navigator.vibrate) {
+                    navigator.vibrate(25);
                 }
             }
             
             // Add event listeners (mouse & touch)
             theButton.addEventListener('mousedown', createRipple);
-            theButton.addEventListener('touchstart', createRipple, { passive: true });
-            theButton.addEventListener('click', handleButtonClick);
+            theButton.addEventListener('touchstart', (e) => {
+                createRipple(e);
+                triggerHapticFeedback();
+            }, { passive: true });
+            
+            theButton.addEventListener('click', (e) => {
+                e.preventDefault();
+                handleButtonClick();
+            });
             
             // Spacebar support
             document.addEventListener('keydown', (event) => {
                 if (event.code === 'Space') {
                     event.preventDefault();
                     theButton.click();
-                    theButton.classList.add('active');
-                    setTimeout(() => {
-                        theButton.classList.remove('active');
-                    }, 100);
                 }
             });
         });
