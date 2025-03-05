@@ -23,6 +23,13 @@ It's a button. Press it. It tracks your clicks and gives feedback through visual
   - Lights that turn on around the button
   - Click counter
 
+- **Achievements System**
+  - 8 unique unlockable achievements 
+  - Achievement notifications when unlocked
+  - Achievement showcase panel
+  - Progress saved between sessions
+  - Special achievements for rapid clicking
+
 - **Celebrations**
   - Confetti and stars at milestones
   - Special sounds
@@ -44,6 +51,7 @@ It's a button. Press it. It tracks your clicks and gives feedback through visual
 - Built with HTML, CSS, and vanilla JavaScript
 - No dependencies
 - Fast animations with minimal performance impact
+- Local storage for saving achievements and click count
 - Responsive on all screen sizes
 
 ## Host It
