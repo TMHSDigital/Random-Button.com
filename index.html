@@ -12,44 +12,315 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        .highlight {
+            color: var(--primary-color);
+            text-shadow: 0 0 10px var(--primary-color);
+        }
+        
+        .flash {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: white;
+            opacity: 0;
+            z-index: 9999;
+            pointer-events: none;
+            transition: opacity 0.1s ease;
+        }
+        
+        .category {
+            font-size: 0.9rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            color: var(--primary-color);
+            display: inline-block;
+            margin-bottom: 0.5rem;
+            border-bottom: 1px solid var(--primary-color);
+            padding-bottom: 4px;
+            text-transform: uppercase;
+        }
+        
+        .particle {
+            position: fixed;
+            background-color: var(--primary-color);
+            border-radius: 50%;
+            opacity: 0.6;
+            pointer-events: none;
+            animation: float linear infinite;
+            z-index: -1;
+        }
+        
+        @keyframes float {
+            0% {
+                transform: translateY(0) rotate(0deg);
+                opacity: 0.6;
+            }
+            100% {
+                transform: translateY(-100vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+        
+        .ripple {
+            position: absolute;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.4);
+            transform: scale(0);
+            animation: ripple 0.8s linear;
+            pointer-events: none;
+        }
+        
+        @keyframes ripple {
+            to {
+                transform: scale(2.5);
+                opacity: 0;
+            }
+        }
+        
+        .glitch {
+            position: relative;
+            animation: glitch-skew 1s infinite linear alternate-reverse;
+        }
+        
+        .glitch::before,
+        .glitch::after {
+            content: attr(data-text);
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0.8;
+        }
+        
+        .glitch::before {
+            color: #ff00c1;
+            animation: glitch-effect 1.5s infinite linear alternate-reverse;
+            clip-path: polygon(0 0, 100% 0, 100% 45%, 0 45%);
+            transform: translate(-0.1em, -0.025em);
+        }
+        
+        .glitch::after {
+            color: #3498db;
+            animation: glitch-effect 2s infinite linear alternate-reverse;
+            clip-path: polygon(0 80%, 100% 20%, 100% 100%, 0 100%);
+            transform: translate(0.1em, 0.025em);
+        }
+        
+        @keyframes glitch-effect {
+            0% {
+                transform: translate(0);
+            }
+            25% {
+                transform: translate(-0.15em, 0.025em);
+            }
+            50% {
+                transform: translate(-0.025em, -0.05em);
+            }
+            75% {
+                transform: translate(0.125em, 0.03em);
+            }
+            100% {
+                transform: translate(0);
+            }
+        }
+        
+        @keyframes glitch-skew {
+            0% {
+                transform: skew(0deg);
+            }
+            25% {
+                transform: skew(1deg);
+            }
+            50% {
+                transform: skew(-1deg);
+            }
+            75% {
+                transform: skew(1deg);
+            }
+            100% {
+                transform: skew(-1deg);
+            }
+        }
+        
+        .warning-text {
+            position: fixed;
+            top: 20px;
+            left: 0;
+            width: 100%;
+            text-align: center;
+            color: var(--primary-color);
+            font-size: 12px;
+            opacity: 0;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            font-weight: 700;
+            z-index: 100;
+            animation: blink 4s ease infinite;
+        }
+        
+        @keyframes blink {
+            0%, 100% { opacity: 0; }
+            50% { opacity: 1; }
+        }
+        
+        .heartbeat {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(255, 0, 0, 0.05);
+            z-index: -2;
+            opacity: 0;
+            pointer-events: none;
+        }
+        
+        .pulse-dot {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background-color: var(--primary-color);
+            box-shadow: 0 0 10px var(--primary-color);
+            opacity: 0;
+            z-index: -1;
+            animation: pulse-fade 3s infinite ease-out;
+        }
+
+        @keyframes pulse-fade {
+            0% { transform: scale(0); opacity: 1; }
+            100% { transform: scale(20); opacity: 0; }
+        }
+        
+        #buttonClickCount {
+            position: fixed;
+            bottom: 10px;
+            right: 10px;
+            font-size: 12px;
+            color: rgba(255,255,255,0.3);
+            z-index: 1000;
+        }
+        
+        .hidden-message {
+            position: absolute;
+            font-size: 3px;
+            opacity: 0.1;
+            bottom: 5px;
+            right: 5px;
+            -webkit-user-select: none;
+            user-select: none;
+        }
+    </style>
 </head>
 <body>
     <div class="overlay"></div>
+    <div class="warning-text">CONNECTION ESTABLISHED</div>
+    <div class="heartbeat" id="heartbeat"></div>
     
     <div class="container">
         <h1>THE RANDOM <span class="highlight">BUTTON</span></h1>
         <p class="subtitle">Do you dare to click?</p>
         
         <div class="button-container">
-            <button id="randomButton">PUSH ME</button>
+            <button id="randomButton" data-text="PUSH ME">PUSH ME</button>
         </div>
         
         <div id="result" class="result-container">
             <p id="resultText">Your fate awaits...</p>
+            <span class="hidden-message">they are watching</span>
         </div>
     </div>
     
     <div id="particles"></div>
+    <div id="buttonClickCount">Clicks: 0</div>
     
     <footer>
         <p>Created with ❤️‍🔥 | <a href="https://github.com/TMHSDigital/Random-Button.com" target="_blank" rel="noopener">GitHub</a></p>
     </footer>
     
-    <script src="script.js"></script>
+    <!-- Audio preloading -->
+    <audio id="buttonClickSound" preload="auto">
+        <source src="https://cdn.pixabay.com/download/audio/2021/08/09/audio_0625d2cfb0.mp3?filename=click-21156.mp3" type="audio/mpeg">
+    </audio>
+    <audio id="glitchSound" preload="auto">
+        <source src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_00fc72b2ce.mp3?filename=glitch-41252.mp3" type="audio/mpeg">
+    </audio>
+    <audio id="whooshSound" preload="auto">
+        <source src="https://cdn.pixabay.com/download/audio/2022/01/18/audio_3ff62246df.mp3?filename=whoosh-6316.mp3" type="audio/mpeg">
+    </audio>
+    <audio id="heartbeatSound" preload="auto" loop>
+        <source src="https://cdn.pixabay.com/download/audio/2022/01/13/audio_f16f812f39.mp3?filename=heartbeat-60bpm-94233.mp3" type="audio/mpeg">
+    </audio>
+    
     <script>
-        // Backup script with dramatic effects
+        // Enhanced experience with dramatic effects
         document.addEventListener('DOMContentLoaded', () => {
+            // Elements
             const randomButton = document.getElementById('randomButton');
             const resultText = document.getElementById('resultText');
             const resultContainer = document.getElementById('result');
             const body = document.body;
             const container = document.querySelector('.container');
             const particles = document.getElementById('particles');
+            const buttonClickCount = document.getElementById('buttonClickCount');
+            const heartbeat = document.getElementById('heartbeat');
+            const warningText = document.querySelector('.warning-text');
+            
+            // Audio elements
+            const buttonClickSound = document.getElementById('buttonClickSound');
+            const glitchSound = document.getElementById('glitchSound');
+            const whooshSound = document.getElementById('whooshSound');
+            const heartbeatSound = document.getElementById('heartbeatSound');
+            
+            // Fix audio for Safari
+            buttonClickSound.load();
+            glitchSound.load();
+            whooshSound.load();
+            heartbeatSound.load();
+
+            // State tracking
+            let clickCount = 0;
+            let secretActivated = false;
+            let warningTexts = [
+                "CONNECTION ESTABLISHED",
+                "SYSTEM INITIATED",
+                "ANALYZING USER",
+                "MONITORING ACTIVE",
+                "THEY ARE WATCHING",
+                "DO NOT TRUST THE BUTTON",
+                "ERROR IN REALITY MATRIX",
+                "BREACH DETECTED"
+            ];
+            
+            // Create pulse dots
+            function createPulseDots() {
+                for (let i = 0; i < 3; i++) {
+                    setTimeout(() => {
+                        const dot = document.createElement('div');
+                        dot.classList.add('pulse-dot');
+                        
+                        // Random position
+                        dot.style.left = `${Math.random() * 100}%`;
+                        dot.style.top = `${Math.random() * 100}%`;
+                        
+                        document.body.appendChild(dot);
+                        
+                        // Remove after animation
+                        setTimeout(() => {
+                            document.body.removeChild(dot);
+                        }, 3000);
+                    }, i * 1000);
+                }
+            }
             
             // Create particles
             function createParticles() {
                 particles.innerHTML = '';
-                const particleCount = 20;
+                const particleCount = Math.min(20 + clickCount, 50);
                 
                 for(let i = 0; i < particleCount; i++) {
                     const particle = document.createElement('div');
@@ -77,9 +348,97 @@
                 flash.classList.add('flash');
                 document.body.appendChild(flash);
                 
+                // Trigger flash
                 setTimeout(() => {
-                    document.body.removeChild(flash);
+                    flash.style.opacity = '0.5';
+                }, 10);
+                
+                setTimeout(() => {
+                    flash.style.opacity = '0';
+                    setTimeout(() => {
+                        document.body.removeChild(flash);
+                    }, 100);
                 }, 150);
+            }
+            
+            // Ripple effect
+            function createRipple(event) {
+                const button = event.currentTarget;
+                const circle = document.createElement('div');
+                const diameter = Math.max(button.clientWidth, button.clientHeight);
+                
+                circle.classList.add('ripple');
+                circle.style.width = circle.style.height = `${diameter}px`;
+                
+                const rect = button.getBoundingClientRect();
+                const offsetX = event.clientX - rect.left - diameter / 2;
+                const offsetY = event.clientY - rect.top - diameter / 2;
+                
+                circle.style.left = `${offsetX}px`;
+                circle.style.top = `${offsetY}px`;
+                
+                button.appendChild(circle);
+                
+                setTimeout(() => {
+                    circle.remove();
+                }, 800);
+            }
+            
+            // Glitch effect
+            function applyGlitchEffect() {
+                randomButton.classList.add('glitch');
+                randomButton.setAttribute('data-text', randomButton.textContent);
+                
+                setTimeout(() => {
+                    randomButton.classList.remove('glitch');
+                }, 2000);
+            }
+            
+            // Toggle heartbeat effect
+            function toggleHeartbeat(enabled) {
+                if (enabled) {
+                    const interval = setInterval(() => {
+                        heartbeat.style.opacity = '1';
+                        setTimeout(() => {
+                            heartbeat.style.opacity = '0';
+                        }, 300);
+                    }, 2000);
+                    
+                    return interval;
+                }
+            }
+            
+            // Secret unlocked effect
+            function unlockSecret() {
+                if (secretActivated) return;
+                
+                secretActivated = true;
+                glitchSound.play();
+                
+                // Dramatic visual changes
+                document.body.style.transition = 'all 2s ease';
+                document.body.style.background = 'linear-gradient(-45deg, #000000, #1a0000, #340000, #0a0a0a)';
+                
+                resultContainer.style.borderColor = '#ff0000';
+                resultContainer.style.boxShadow = '0 0 30px rgba(255, 0, 0, 0.3)';
+                
+                // Start heartbeat
+                const heartbeatInterval = toggleHeartbeat(true);
+                heartbeatSound.volume = 0.15;
+                heartbeatSound.play();
+                
+                // Easter egg message
+                setTimeout(() => {
+                    resultText.innerHTML = `<span class="category" style="color: #ff0000; border-color: #ff0000;">SYSTEM ALERT</span><br>You have clicked too many times. They know you're here now. Be careful with what you wish for.`;
+                    
+                    // Continuous warning message changes
+                    setInterval(() => {
+                        warningText.textContent = warningTexts[Math.floor(Math.random() * warningTexts.length)];
+                        warningText.style.opacity = '1';
+                    }, 4000);
+                }, 500);
+                
+                return heartbeatInterval;
             }
             
             if (randomButton && resultText && resultContainer) {
@@ -99,28 +458,72 @@
                     { text: "The mask you wear is becoming your true face. Remember who you really are.", category: "IDENTITY" },
                     { text: "A test of character approaches. How you respond will reveal your true nature.", category: "TRIAL" },
                     { text: "The walls have ears, and your secrets may not be safe for long.", category: "WARNING" },
-                    { text: "A gift will arrive in an unusual form. Do not dismiss it.", category: "BLESSING" }
+                    { text: "A gift will arrive in an unusual form. Do not dismiss it.", category: "BLESSING" },
+                    { text: "Look at the clock at exactly 11:11. Make a wish, but be careful what you wish for.", category: "SYNCHRONICITY" },
+                    { text: "The next song you hear will contain a message meant specifically for you.", category: "SIGN" },
+                    { text: "Someone is keeping a secret from you. The truth will be revealed soon.", category: "DECEPTION" },
+                    { text: "An unexpected letter or message will arrive within three days.", category: "PREMONITION" },
+                    { text: "The dream you had last night was not just a dream. It was a glimpse into another reality.", category: "PARALLEL WORLD" }
                 ];
                 
                 // Initialize
                 createParticles();
+                createPulseDots();
+                
+                // Button hover sound effect
+                randomButton.addEventListener('mouseenter', () => {
+                    if (whooshSound.paused) {
+                        whooshSound.volume = 0.2;
+                        whooshSound.currentTime = 0;
+                        whooshSound.play();
+                    }
+                });
+                
+                // Add click effect to button
+                randomButton.addEventListener('mousedown', createRipple);
                 
                 // Button click event
                 randomButton.addEventListener('click', () => {
+                    // Track clicks
+                    clickCount++;
+                    buttonClickCount.textContent = `Clicks: ${clickCount}`;
+                    
+                    // Play click sound
+                    buttonClickSound.currentTime = 0;
+                    buttonClickSound.volume = 0.3;
+                    buttonClickSound.play();
+                    
                     // Button press effect
                     randomButton.style.transform = 'scale(0.95)';
                     setTimeout(() => {
                         randomButton.style.transform = '';
                     }, 150);
                     
-                    // Background color shift
+                    // Check for secret threshold
+                    if (clickCount >= 13 && !secretActivated) {
+                        unlockSecret();
+                        return;
+                    }
+                    
+                    // Background color shift (more dramatic based on clicks)
                     const hue = Math.floor(Math.random() * 360);
-                    body.style.background = `linear-gradient(-45deg, hsl(${hue}, 100%, 5%), hsl(${hue}, 100%, 10%), hsl(${hue}, 80%, 15%), hsl(${hue}, 70%, 8%))`;
+                    const intensity = Math.min(10 + clickCount, 30);
+                    body.style.background = `linear-gradient(-45deg, 
+                        hsl(${hue}, 100%, 5%), 
+                        hsl(${hue}, 100%, ${intensity}%), 
+                        hsl(${hue}, 80%, ${Math.min(intensity + 5, 20)}%), 
+                        hsl(${hue}, 70%, 8%))`;
                     body.style.backgroundSize = '400% 400%';
                     
                     // Visual effects
                     flashEffect();
                     container.classList.add('shake-animation');
+                    
+                    // Apply glitch effect occasionally
+                    if (clickCount > 5 && Math.random() > 0.7) {
+                        applyGlitchEffect();
+                    }
+                    
                     setTimeout(() => {
                         container.classList.remove('shake-animation');
                     }, 500);
@@ -141,6 +544,11 @@
                     
                     // Recreate particles
                     createParticles();
+                    
+                    // Create pulse dots
+                    if (clickCount > 3) {
+                        createPulseDots();
+                    }
                 });
                 
                 // Add spacebar shortcut
@@ -157,55 +565,5 @@
             }
         });
     </script>
-    
-    <style>
-        .highlight {
-            color: var(--primary-color);
-        }
-        
-        .flash {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: white;
-            opacity: 0.5;
-            z-index: 9999;
-            pointer-events: none;
-        }
-        
-        .category {
-            font-size: 0.9rem;
-            font-weight: 700;
-            letter-spacing: 2px;
-            color: var(--primary-color);
-            display: inline-block;
-            margin-bottom: 0.5rem;
-            border-bottom: 1px solid var(--primary-color);
-            padding-bottom: 4px;
-        }
-        
-        .particle {
-            position: fixed;
-            background-color: var(--primary-color);
-            border-radius: 50%;
-            opacity: 0.6;
-            pointer-events: none;
-            animation: float linear infinite;
-            z-index: -1;
-        }
-        
-        @keyframes float {
-            0% {
-                transform: translateY(0) rotate(0deg);
-                opacity: 0.6;
-            }
-            100% {
-                transform: translateY(-100vh) rotate(360deg);
-                opacity: 0;
-            }
-        }
-    </style>
 </body>
 </html> 
