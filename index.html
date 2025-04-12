@@ -126,6 +126,39 @@
             align-items: center;
         }
 
+        .radial-lines {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            opacity: 0.15;
+            animation: rotateSlow 20s linear infinite;
+        }
+
+        .radial-lines::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 200%;
+            height: 200%;
+            transform: translate(-50%, -50%);
+            background: repeating-conic-gradient(
+                from 0deg,
+                transparent 0deg,
+                transparent 30deg,
+                var(--accent-color) 30deg,
+                var(--accent-color) 31deg
+            );
+            mask-image: radial-gradient(circle at center, transparent 35%, black 36%, black 61%, transparent 62%);
+            -webkit-mask-image: radial-gradient(circle at center, transparent 35%, black 36%, black 61%, transparent 62%);
+        }
+
+        @keyframes rotateSlow {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
         .button-outer {
             position: absolute;
             top: 0;
@@ -136,8 +169,8 @@
             margin: 0;
             padding: 0;
             background: radial-gradient(circle at center, 
-                rgba(255, 58, 58, 0.15) 0%,
-                rgba(255, 0, 0, 0.05) 60%,
+                rgba(255, 58, 58, 0.2) 0%,
+                rgba(255, 0, 0, 0.1) 60%,
                 transparent 100%
             );
             box-shadow: 
@@ -145,6 +178,7 @@
                 0 0 100px rgba(255, 58, 58, 0.1);
             filter: blur(2px);
             animation: buttonPulse 2.5s infinite ease-in-out;
+            transition: all 0.15s ease;
         }
 
         @keyframes buttonPulse {
@@ -191,7 +225,9 @@
             background: radial-gradient(circle at 30% 25%, #ff5252, #b71c1c 80%);
             border: none;
             cursor: pointer;
-            transition: all 0.08s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            transition: all 0.08s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+                        box-shadow 0.15s ease,
+                        transform 0.15s ease;
             color: white;
             font-size: 1.4rem;
             font-weight: 600;
@@ -214,16 +250,43 @@
                 0 0 50px rgba(255, 58, 58, 0.2);
         }
 
+        #theButton:hover {
+            transform: translate(-50%, -52%);
+            box-shadow: 
+                /* Inner shadows */
+                inset 0 -8px 0 #8b0000,
+                inset 2px 2px 20px rgba(255, 255, 255, 0.3),
+                inset -2px -2px 20px rgba(0, 0, 0, 0.5),
+                /* Enhanced glow */
+                0 0 40px var(--shadow-color),
+                0 0 80px var(--glow-color),
+                /* 3D effect */
+                0 12px 0 #8b0000,
+                0 12px 24px rgba(0, 0, 0, 0.8);
+        }
+
+        #theButton:hover::after {
+            animation-duration: 4s;
+        }
+
+        .button-outer:hover {
+            filter: blur(3px);
+            transform: scale(1.05);
+        }
+
         #theButton:active {
             transform: translate(-50%, -46%) scale(0.98);
             box-shadow: 
+                /* Inner shadows */
                 inset 0 -4px 0 #8b0000,
                 inset 2px 2px 15px rgba(255, 255, 255, 0.2),
                 inset -2px -2px 15px rgba(0, 0, 0, 0.6),
+                /* Enhanced glow */
                 0 0 45px var(--shadow-color),
+                0 0 90px var(--glow-color),
+                /* 3D effect */
                 0 5px 0 #8b0000,
-                0 5px 10px rgba(0, 0, 0, 0.8),
-                0 0 60px rgba(255, 58, 58, 0.3);
+                0 5px 10px rgba(0, 0, 0, 0.8);
         }
 
         /* Add shine effect to button */
@@ -1081,6 +1144,7 @@
         <h1>THE BUTTON</h1>
         
         <div class="button-wrapper">
+            <div class="radial-lines"></div>
             <div class="shockwave-container"></div>
             <div class="particles"></div>
             <svg class="progress-ring" viewBox="0 0 220 220">
