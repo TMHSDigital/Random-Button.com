@@ -121,6 +121,9 @@
             height: 220px;
             z-index: 10;
             overflow: visible;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
 
         .button-outer {
@@ -130,6 +133,8 @@
             width: 100%;
             height: 100%;
             border-radius: 50%;
+            margin: 0;
+            padding: 0;
             background: radial-gradient(circle at center, 
                 rgba(255, 58, 58, 0.15) 0%,
                 rgba(255, 0, 0, 0.05) 60%,
@@ -183,6 +188,8 @@
             width: 180px;
             height: 180px;
             border-radius: 50%;
+            margin: 0;
+            padding: 0;
             background: radial-gradient(circle at 30% 25%, #ff5252, #b71c1c 80%);
             border: none;
             cursor: pointer;
@@ -258,15 +265,13 @@
 
         .click-count {
             position: absolute;
-            bottom: -50px;
-            left: 0;
-            width: 100%;
-            text-align: center;
-            font-size: 1.4rem;
-            font-weight: 600;
+            bottom: -2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 1.2rem;
             color: var(--accent-color);
-            text-shadow: 0 0 10px var(--glow-color);
-            transition: all 0.2s ease;
+            text-align: center;
+            width: 100%;
         }
 
         /* Next milestone indicator */
@@ -377,6 +382,8 @@
             width: 100%;
             height: 100%;
             transform: rotate(-90deg);
+            top: 0;
+            left: 0;
         }
 
         .progress-ring circle {
@@ -929,6 +936,8 @@
             position: absolute;
             width: 100%;
             height: 100%;
+            top: 0;
+            left: 0;
             pointer-events: none;
         }
 
