@@ -142,8 +142,15 @@
             width: 100%;
             height: 100%;
             border-radius: 50%;
-            background: linear-gradient(135deg, rgba(255, 58, 58, 0.2), rgba(255, 0, 0, 0.1));
-            box-shadow: 0 0 30px rgba(255, 58, 58, 0.2);
+            background: radial-gradient(circle at center, 
+                rgba(255, 58, 58, 0.15) 0%,
+                rgba(255, 0, 0, 0.05) 60%,
+                transparent 100%
+            );
+            box-shadow: 
+                0 0 50px rgba(255, 58, 58, 0.2),
+                0 0 100px rgba(255, 58, 58, 0.1);
+            filter: blur(2px);
             animation: pulse 2.5s infinite ease-in-out;
         }
 
@@ -151,14 +158,17 @@
             0% {
                 transform: scale(1);
                 opacity: 0.8;
+                filter: blur(2px);
             }
             50% {
-                transform: scale(1.08);
+                transform: scale(1.12);
                 opacity: 0.4;
+                filter: blur(3px);
             }
             100% {
                 transform: scale(1);
                 opacity: 0.8;
+                filter: blur(2px);
             }
         }
 
@@ -185,9 +195,9 @@
             /* Enhanced 3D effect */
             box-shadow: 
                 inset 0 -8px 0 #8b0000,
-                inset 2px 2px 6px rgba(255, 255, 255, 0.3),
-                inset -2px -2px 6px rgba(0, 0, 0, 0.4),
-                0 0 25px var(--shadow-color),
+                inset 2px 2px 20px rgba(255, 255, 255, 0.2),
+                inset -2px -2px 20px rgba(0, 0, 0, 0.4),
+                0 0 35px var(--shadow-color),
                 0 10px 0 #8b0000,
                 0 10px 20px rgba(0, 0, 0, 0.8);
             /* Subtle shine effect */
@@ -368,24 +378,26 @@
 
         .progress-ring {
             position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 200px;
-            height: 200px;
-            transform: translate(-50%, -50%);
-            pointer-events: none;
+            width: 100%;
+            height: 100%;
+            transform: rotate(-90deg);
         }
 
         .progress-ring circle {
-            fill: transparent;
+            fill: none;
+            stroke-width: 4;
+        }
+
+        .progress-ring-bg {
+            stroke: rgba(255, 58, 58, 0.1);
+        }
+
+        .progress-ring-progress {
             stroke: var(--accent-color);
-            stroke-width: 4px;
-            stroke-linecap: round;
-            stroke-dasharray: 502; /* Circumference of circle (2πr) */
-            stroke-dashoffset: 502; /* Start with full offset (no progress) */
-            opacity: 0.6;
-            filter: drop-shadow(0 0 5px var(--glow-color));
+            stroke-dasharray: 628;
+            stroke-dashoffset: var(--progress);
             transition: stroke-dashoffset 0.3s ease;
+            filter: drop-shadow(0 0 4px var(--accent-color));
         }
 
         footer {
@@ -916,6 +928,92 @@
         .error-message.visible {
             opacity: 1;
         }
+
+        .particles {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+
+        .particle {
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            background: var(--accent-color);
+            border-radius: 50%;
+            pointer-events: none;
+            animation: particle 0.8s ease-out forwards;
+        }
+
+        @keyframes particle {
+            0% {
+                opacity: 1;
+                transform: scale(1);
+            }
+            100% {
+                opacity: 0;
+                transform: scale(0) translate(var(--tx), var(--ty));
+            }
+        }
+
+        .spark {
+            position: absolute;
+            width: 2px;
+            height: 10px;
+            background: linear-gradient(to bottom, var(--accent-color), transparent);
+            pointer-events: none;
+            animation: spark 0.4s linear forwards;
+        }
+
+        @keyframes spark {
+            0% {
+                opacity: 1;
+                transform: translate(var(--x), var(--y)) rotate(var(--r)) scale(1);
+            }
+            100% {
+                opacity: 0;
+                transform: translate(
+                    calc(var(--x) * 2), 
+                    calc(var(--y) * 2)
+                ) rotate(var(--r)) scale(0);
+            }
+        }
+
+        .combo-counter {
+            position: absolute;
+            top: -40px;
+            right: -20px;
+            color: var(--accent-color);
+            font-size: 1.5rem;
+            font-weight: bold;
+            text-shadow: 0 0 10px var(--accent-color);
+            opacity: 0;
+            transform: scale(0.8);
+            transition: all 0.2s ease;
+            z-index: 10;
+        }
+
+        .combo-counter.active {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        .combo-counter span {
+            display: inline-block;
+            min-width: 1.2em;
+            text-align: center;
+        }
+
+        @keyframes comboScale {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+
+        .combo-counter.pulse span {
+            animation: comboScale 0.2s ease;
+        }
     </style>
 </head>
 <body>
@@ -932,6 +1030,12 @@
         <h1>THE BUTTON</h1>
         
         <div class="button-wrapper">
+            <div class="combo-counter" id="comboCounter">x<span>1</span></div>
+            <div class="particles"></div>
+            <svg class="progress-ring" viewBox="0 0 220 220">
+                <circle class="progress-ring-bg" cx="110" cy="110" r="100" />
+                <circle class="progress-ring-progress" cx="110" cy="110" r="100" />
+            </svg>
             <div class="button-outer"></div>
             <button id="theButton" aria-label="Push the button to increment your click count">PUSH</button>
             <div class="feedback-circle" id="feedbackCircle"></div>
@@ -1094,6 +1198,8 @@
             let lastTouchTime = 0; // For preventing touch vs click interference
             let audioEnabled = false; // Track if audio has been enabled by user interaction
             let storageAvailable = true; // Flag to track if localStorage is available
+            let comboCount = 1;
+            const COMBO_TIMEOUT = 500; // ms between clicks to maintain combo
             
             // Check if storage is available
             function isStorageAvailable() {
@@ -1628,76 +1734,48 @@
             }
             
             // Create particle effects with performance consideration
-            function createParticles(x, y, count = 20, size = 5, color = null) {
-                // Reduce particle count on lower-end devices
-                if (shouldUseReducedMotion()) {
-                    count = Math.floor(count / 3);
-                    if (count === 0) return;
-                }
+            function createParticles(x, y) {
+                const particles = document.querySelector('.particles');
+                const numParticles = 12;
+                const numSparks = 8;
                 
-                for (let i = 0; i < count; i++) {
+                // Create circular particles
+                for (let i = 0; i < numParticles; i++) {
                     const particle = document.createElement('div');
-                    particle.classList.add('particle');
+                    particle.className = 'particle';
                     
-                    // Random size between 3 and max size
-                    const particleSize = Math.random() * size + 3;
+                    const angle = (i / numParticles) * Math.PI * 2;
+                    const tx = Math.cos(angle) * 100;
+                    const ty = Math.sin(angle) * 100;
                     
-                    // Set particle properties
-                    particle.style.width = `${particleSize}px`;
-                    particle.style.height = `${particleSize}px`;
-                    
-                    // Use provided color or random from confetti colors
-                    if (color) {
-                        particle.style.backgroundColor = color;
-                    } else {
-                        particle.style.backgroundColor = confettiColors[Math.floor(Math.random() * confettiColors.length)];
-                    }
-                    
-                    // Set starting position
+                    particle.style.setProperty('--tx', `${tx}px`);
+                    particle.style.setProperty('--ty', `${ty}px`);
                     particle.style.left = `${x}px`;
                     particle.style.top = `${y}px`;
                     
-                    particlesContainer.appendChild(particle);
+                    particles.appendChild(particle);
+                    setTimeout(() => particle.remove(), 800);
+                }
+                
+                // Create radiating sparks
+                for (let i = 0; i < numSparks; i++) {
+                    const spark = document.createElement('div');
+                    spark.className = 'spark';
                     
-                    // Calculate random direction and speed
-                    const angle = Math.random() * Math.PI * 2;
-                    const speed = Math.random() * 100 + 50;
-                    const distance = Math.random() * 100 + 50;
-                    const duration = Math.random() * 1.5 + 1;
+                    const angle = (i / numSparks) * Math.PI * 2;
+                    const x = Math.cos(angle) * 40;
+                    const y = Math.sin(angle) * 40;
                     
-                    // Animate particle
-                    const animation = particle.animate([
-                        { 
-                            transform: 'translate(0, 0) scale(1)', 
-                            opacity: 1 
-                        },
-                        { 
-                            transform: `translate(${Math.cos(angle) * distance}px, ${Math.sin(angle) * distance}px) scale(0)`, 
-                            opacity: 0 
-                        }
-                    ], {
-                        duration: duration * 1000,
-                        easing: 'cubic-bezier(0.1, 0.8, 0.2, 1)'
-                    });
+                    spark.style.setProperty('--x', `${x}px`);
+                    spark.style.setProperty('--y', `${y}px`);
+                    spark.style.setProperty('--r', `${angle}rad`);
+                    spark.style.left = `${x}px`;
+                    spark.style.top = `${y}px`;
                     
-                    animation.onfinish = () => {
-                        particle.remove();
-                    };
+                    particles.appendChild(spark);
+                    setTimeout(() => spark.remove(), 400);
                 }
             }
-            
-            // Cleanup unused animations periodically
-            function cleanupUnusedAnimations() {
-                const particles = document.querySelectorAll('.particle');
-                particles.forEach(particle => {
-                    if (!particle.getAnimations().some(anim => anim.playState === 'running')) {
-                        particle.remove();
-                    }
-                });
-            }
-            
-            // Call cleanup periodically
-            setInterval(cleanupUnusedAnimations, 5000);
             
             // Reset confirmation dialog management with ARIA updates
             function openConfirmDialog() {
@@ -1859,7 +1937,7 @@
                     const buttonCenterY = rect.top + rect.height / 2;
                     
                     // Create particles from button center
-                    createParticles(buttonCenterX, buttonCenterY, 10, 4);
+                    createParticles(buttonCenterX, buttonCenterY);
                 }
                 
                 // Increment count
@@ -1901,7 +1979,7 @@
                     // Create more particles for milestones
                     if (event) {
                         const rect = theButton.getBoundingClientRect();
-                        createParticles(rect.left + rect.width / 2, rect.top + rect.height / 2, 30, 8);
+                        createParticles(rect.left + rect.width / 2, rect.top + rect.height / 2);
                     }
                     
                     // Pop sound for milestones
@@ -1919,6 +1997,34 @@
                     saveToLocalStorage('clickCount', count.toString());
                 }
             }
+
+            function updateCombo() {
+                const now = Date.now();
+                const timeSinceLastClick = now - lastClickTime;
+                
+                if (timeSinceLastClick < COMBO_TIMEOUT) {
+                    comboCount++;
+                    document.getElementById('comboCounter').classList.add('active');
+                    const span = document.getElementById('comboCounter').querySelector('span');
+                    span.textContent = comboCount;
+                    span.classList.remove('pulse');
+                    void span.offsetWidth; // Force reflow
+                    span.classList.add('pulse');
+                } else {
+                    comboCount = 1;
+                    document.getElementById('comboCounter').classList.remove('active');
+                }
+                
+                lastClickTime = now;
+            }
+
+            // Reset combo if no clicks within timeout
+            setInterval(() => {
+                if (Date.now() - lastClickTime > COMBO_TIMEOUT && comboCount > 1) {
+                    comboCount = 1;
+                    document.getElementById('comboCounter').classList.remove('active');
+                }
+            }, COMBO_TIMEOUT);
         });
     </script>
 </body>
