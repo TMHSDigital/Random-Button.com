@@ -25,25 +25,13 @@
             --glow-color: rgba(255, 58, 58, 0.4);
             --card-bg: rgba(30, 30, 30, 0.7);
             --panel-bg: rgba(15, 15, 15, 0.95);
-            --vh: 1vh; /* Variable for viewport height fix */
+            --vh: 1vh;
         }
 
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-        }
-
-        @keyframes gradientBG {
-            0% {
-                background-position: 0% 50%;
-            }
-            50% {
-                background-position: 100% 50%;
-            }
-            100% {
-                background-position: 0% 50%;
-            }
         }
 
         body {
@@ -402,7 +390,7 @@
 
         .progress-ring-progress {
             stroke: var(--accent-color);
-            stroke-dasharray: 628;
+            stroke-dasharray: calc(2 * 3.14159 * 100);
             stroke-dashoffset: var(--progress);
             transition: stroke-dashoffset 0.3s ease;
             filter: drop-shadow(0 0 4px var(--accent-color));
