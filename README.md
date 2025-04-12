@@ -6,6 +6,8 @@
 
 ---
 
+---
+
 ## What It Does
 
 It's a button. Press it. It tracks your clicks and gives feedback through visuals and sound.
