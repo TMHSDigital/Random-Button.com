@@ -188,8 +188,6 @@
             width: 180px;
             height: 180px;
             border-radius: 50%;
-            margin: 0;
-            padding: 0;
             background: radial-gradient(circle at 30% 25%, #ff5252, #b71c1c 80%);
             border: none;
             cursor: pointer;
@@ -202,16 +200,30 @@
             user-select: none;
             -webkit-user-select: none;
             -webkit-tap-highlight-color: transparent;
-            /* Enhanced 3D effect */
             box-shadow: 
+                /* Inner shadows for depth */
                 inset 0 -8px 0 #8b0000,
-                inset 2px 2px 20px rgba(255, 255, 255, 0.2),
-                inset -2px -2px 20px rgba(0, 0, 0, 0.4),
+                inset 2px 2px 20px rgba(255, 255, 255, 0.3),
+                inset -2px -2px 20px rgba(0, 0, 0, 0.5),
+                /* Outer glow */
                 0 0 35px var(--shadow-color),
+                /* 3D effect */
                 0 10px 0 #8b0000,
-                0 10px 20px rgba(0, 0, 0, 0.8);
-            /* Subtle shine effect */
-            text-shadow: 0 -1px 1px rgba(0, 0, 0, 0.5);
+                0 10px 20px rgba(0, 0, 0, 0.8),
+                /* Additional glow */
+                0 0 50px rgba(255, 58, 58, 0.2);
+        }
+
+        #theButton:active {
+            transform: translate(-50%, -46%) scale(0.98);
+            box-shadow: 
+                inset 0 -4px 0 #8b0000,
+                inset 2px 2px 15px rgba(255, 255, 255, 0.2),
+                inset -2px -2px 15px rgba(0, 0, 0, 0.6),
+                0 0 45px var(--shadow-color),
+                0 5px 0 #8b0000,
+                0 5px 10px rgba(0, 0, 0, 0.8),
+                0 0 60px rgba(255, 58, 58, 0.3);
         }
 
         /* Add shine effect to button */
@@ -241,10 +253,6 @@
 
         #theButton:focus {
             outline: none;
-        }
-
-        #theButton:active {
-            transform: translate(-50%, -46%) scale(0.98);
         }
 
         .ripple {
@@ -400,7 +408,9 @@
             stroke-dasharray: calc(2 * 3.14159 * 100);
             stroke-dashoffset: var(--progress);
             transition: stroke-dashoffset 0.3s ease;
-            filter: drop-shadow(0 0 4px var(--accent-color));
+            filter: 
+                drop-shadow(0 0 4px var(--accent-color))
+                drop-shadow(0 0 8px var(--accent-color));
         }
 
         footer {
@@ -1019,6 +1029,42 @@
         .combo-counter.pulse span {
             animation: comboScale 0.2s ease;
         }
+
+        .shockwave-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 5;
+        }
+
+        .shockwave {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 180px;
+            height: 180px;
+            border-radius: 50%;
+            animation: shockwave 0.5s ease-out forwards;
+        }
+
+        @keyframes shockwave {
+            0% {
+                transform: translate(-50%, -50%) scale(1);
+                border: 2px solid var(--accent-color);
+                box-shadow: 0 0 20px var(--accent-color);
+                opacity: 0.8;
+            }
+            100% {
+                transform: translate(-50%, -50%) scale(2);
+                border: 0px solid var(--accent-color);
+                box-shadow: 0 0 0 var(--accent-color);
+                opacity: 0;
+            }
+        }
     </style>
 </head>
 <body>
@@ -1035,7 +1081,7 @@
         <h1>THE BUTTON</h1>
         
         <div class="button-wrapper">
-            <div class="combo-counter" id="comboCounter">x<span>1</span></div>
+            <div class="shockwave-container"></div>
             <div class="particles"></div>
             <svg class="progress-ring" viewBox="0 0 220 220">
                 <circle class="progress-ring-bg" cx="110" cy="110" r="100" />
@@ -2030,6 +2076,21 @@
                     document.getElementById('comboCounter').classList.remove('active');
                 }
             }, COMBO_TIMEOUT);
+
+            function createShockwave() {
+                const container = document.querySelector('.shockwave-container');
+                const wave = document.createElement('div');
+                wave.className = 'shockwave';
+                container.appendChild(wave);
+                
+                // Remove after animation
+                wave.addEventListener('animationend', () => wave.remove());
+            }
+
+            document.getElementById('theButton').addEventListener('click', () => {
+                createShockwave();
+                // ... existing click handler code ...
+            });
         });
     </script>
 </body>
